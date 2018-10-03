@@ -37,7 +37,7 @@ else:
 
 fileCount = 0
 foreignTokenCount = 0
-
+foreignWords = dict()
 for file in files:
     fileCount += 1
     filePath = os.path.join(path,file)
@@ -48,9 +48,23 @@ for file in files:
         for line in content:
                 for word in line.split():
                     if not args.foreignTokens: 
+                        
                         if not only_roman_chars(word):
                             foreignTokenCount += 1
+                            if  word in foreignWords:
+                                foreignWords[word] += 1
+                            else:
+                                foreignWords[word] = 1
+        
 
 if not args.foreignTokens:
-    print('Foreign tokens found: %s' % foreignTokenCount)
-    
+    print('Foreign tokens occurrences: %d' % foreignTokenCount)
+    print('Foreign tokens %d'% len(foreignWords))
+
+with open('foreign.txt','w+',encoding='utf8') as f:
+    f.write('Foreign tokens occurrences: %d \n' % foreignTokenCount)
+    f.write('Foreign tokens %d \n'% len(foreignWords))
+    xs = [(k,foreignWords[k]) for k in sorted(foreignWords, key=foreignWords.get, reverse=True)]
+    for x in xs:
+        f.write(x[0] +' '+str(x[1])+'\n')
+
