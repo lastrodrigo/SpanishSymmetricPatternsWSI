@@ -39,7 +39,7 @@ parser.add_argument('--testPrefix',default='testingCorpus')
 args = parser.parse_args()
 
 trainPrefix = args.trainPrefix
-testPrefix = args.testingCorpus
+testPrefix = args.testPrefix
 trainTokens = args.trainTokens
 testTokens= args.testTokens
 splitFiles = args.splitFiles
