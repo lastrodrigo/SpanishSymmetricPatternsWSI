@@ -67,7 +67,7 @@ if not os.path.exists(os.path.join(outdir,'testing')) or not os.pathisdir(os.pat
 fileCount = 0
 foreignTokenCount = 0
 foreignWords = dict()
-vocab = dict()
+
 data = []
 for file in files:
     fileCount += 1
@@ -90,8 +90,7 @@ for file in files:
                                 foreignWords[word] = 1
                 if not hasForeignToken:
                     data.extend([(random.random(),line)])
-                    for word in line.split():
-                        word_count(word,vocab)
+                    
         
 
 if not args.foreignTokens:
@@ -108,13 +107,16 @@ if not args.foreignTokens:
 data.sort()
 
 tokensPerFile = math.trunc(trainTokens / splitFiles)
+
 lineCount = 0
-outTrainTokens,lineCount = writeShuffledFile(trainTokens,tokensPerFile,data,os.path.join(outdir,'training'),trainPrefix,lineCount)
+vocab = dict()
+
+outTrainTokens,lineCount,vocab = writeShuffledFile(trainTokens,tokensPerFile,data,os.path.join(outdir,'training'),trainPrefix,lineCount,vocab)
 
 print('Training tokens: %d' % outTrainTokens )
 
 tokensPerFile = math.trunc(testTokens/splitFiles)
-outTestTokens,lineCount = writeShuffledFile(testTokens,tokensPerFile,data,os.path.join(outdir,'testing'),testPrefix,lineCount)
+outTestTokens,lineCount,vocab = writeShuffledFile(testTokens,tokensPerFile,data,os.path.join(outdir,'testing'),testPrefix,lineCount,vocab)
 
 print('Testing tokens: %d' % outTestTokens)
 
@@ -132,7 +134,7 @@ with open(os.path.join(outdir,'vocab.txt'),'w+',encoding='utf8') as f:
         f.write(x[0] +"\n")
 
 
-def writeShuffledFile(tokens,tokensPerFile,data,directory,prefix,lineCount):
+def writeShuffledFile(tokens,tokensPerFile,data,directory,prefix,lineCount,vocab):
     fileCount = 0
     totalTokenCount = 0
     
@@ -146,6 +148,8 @@ def writeShuffledFile(tokens,tokensPerFile,data,directory,prefix,lineCount):
                 line = x in data[lineCount] as _,x
                 f.write(line)
                 lineCount += 1
-                tokenCount += len(line.split()) 
+                tokenCount += len(line.split())
+                for word in line.split():
+                    word_count(word,vocab) 
         totalTokenCount += tokenCount
-    return totalTokenCount,lineCount
+    return totalTokenCount,lineCount,vocab
