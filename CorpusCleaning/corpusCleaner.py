@@ -31,7 +31,7 @@ def  word_count(word,counts):
 def writeShuffledFile(tokens,tokensPerFile,data,directory,prefix,lineCount,vocab):
     fileCount = 0
     totalTokenCount = 0
-    
+    lines = 0
     while totalTokenCount < tokens:
         fileCount += 1
         fileName = os.path.join(directory,prefix+'.'+str(fileCount)+'.clean.shuffled')
@@ -42,11 +42,12 @@ def writeShuffledFile(tokens,tokensPerFile,data,directory,prefix,lineCount,vocab
                 line = data[lineCount][1]
                 f.write(line+'\n')
                 lineCount += 1
+                lines += 1
                 tokenCount += len(line.split())
                 for word in line.split():
                     vocab = word_count(word,vocab) 
                 totalTokenCount += len(line.split())
-    return totalTokenCount,lineCount,vocab
+    return totalTokenCount,lineCount,vocab,lines
 
 parser = argparse.ArgumentParser(description='Clean corpus')
 parser.add_argument('path',metavar='Path to corpus',type=str, nargs=1)
@@ -131,15 +132,16 @@ tokensPerFile = math.trunc(trainTokens / splitFiles)
 lineCount = 0
 vocab = dict()
 
-outTrainTokens,lineCount,vocab = writeShuffledFile(trainTokens,tokensPerFile,data,os.path.join(outdir,'training'),trainPrefix,lineCount,vocab)
+outTrainTokens,lineCount,vocab,outTrainLines = writeShuffledFile(trainTokens,tokensPerFile,data,os.path.join(outdir,'training'),trainPrefix,lineCount,vocab)
 
 print('Training tokens: %d' % outTrainTokens )
+print('Training lines: %d' % outTrainLines)
 
 tokensPerFile = math.trunc(testTokens/splitFiles)
-outTestTokens,lineCount,vocab = writeShuffledFile(testTokens,tokensPerFile,data,os.path.join(outdir,'testing'),testPrefix,lineCount,vocab)
+outTestTokens,lineCount,vocab,outTestLines = writeShuffledFile(testTokens,tokensPerFile,data,os.path.join(outdir,'testing'),testPrefix,lineCount,vocab)
 
 print('Testing tokens: %d' % outTestTokens)
-
+print('Testing lines: %d' % outTestLines)
 s = [(k,vocab[k]) for k in sorted(vocab, key=vocab.get, reverse=True)]
 print('Words in vocabulary: %d' % len(s))
 
