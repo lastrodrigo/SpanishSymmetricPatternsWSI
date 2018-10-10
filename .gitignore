@@ -2,3 +2,6 @@ spanish_billion_words/*
 README
 .vscode
 clean_corpus
+SymPatternWSI-master/spwsi/__pycache__/__init__.cpython-36.pyc
+SymPatternWSI-master/spwsi/__pycache__/bilm_elmo.cpython-36.pyc
+SymPatternWSI-master/spwsi/__pycache__/bilm_interface.cpython-36.pyc
