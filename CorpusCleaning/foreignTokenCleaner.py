@@ -17,7 +17,7 @@ def only_roman_chars(unistr):
                for uchr in unistr
                if uchr.isalpha())
 
-parser = argparse.ArgumentParser(description='Clean corpus')
+parser = argparse.ArgumentParser(description='Clean foreign tokens')
 parser.add_argument('path',metavar='Path to corpus',type=str, nargs=1)
 args = parser.parse_args()
 
