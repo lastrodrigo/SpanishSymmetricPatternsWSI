@@ -4,7 +4,7 @@ import math
 
 
 
-parser = argparse.ArgumentParser(description='Clean corpus')
+parser = argparse.ArgumentParser(description='Clean low occurrence words from corpus')
 parser.add_argument('path',metavar='Path to corpus',type=str, nargs=1)
 parser.add_argument('--splitFiles',default=100)
 parser.add_argument('--threshold',default=5)
@@ -47,6 +47,10 @@ for file in files:
                         if unFreqWords[word] = threshold:
                             freqWords.extend(word)
                             unFreqWords.pop(word)
+                        else:
+                            unFreqWords[word] += 1
+                    else:
+                        unFreqWords[word] = 1
             data.extend(line)
 
 print('Low occurrence (<= %d) tokens occurrences: %d' % sum(unFreqWords.values))
