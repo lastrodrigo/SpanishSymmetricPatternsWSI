@@ -44,7 +44,7 @@ for file in files:
             for word in line.split():
                 if not word in freqWords: 
                     if word in unFreqWords:
-                        if unFreqWords[word] = threshold:
+                        if unFreqWords[word] == threshold:
                             freqWords.extend(word)
                             unFreqWords.pop(word)
                         else:
