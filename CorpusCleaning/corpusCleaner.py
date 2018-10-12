@@ -121,7 +121,7 @@ for file in files:
                         else:
                             foreignWords[word] = 1
             if not hasForeignToken:
-                for word in line.split:
+                for word in line.split():
                     if not word in freqWords: 
                         if word in unFreqWords:
                             if unFreqWords[word] == minOccurrence -1 :
@@ -133,7 +133,7 @@ for file in files:
                             unFreqWords[word] = 1
                     else:
                         freqWords[word] +=1
-                line += 1
+                lines += 1
                 data.extend([(random.random(),line)])
                     
         
