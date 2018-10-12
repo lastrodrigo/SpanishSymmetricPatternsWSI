@@ -71,7 +71,7 @@ lineIterator = 0
 while lineIterator < len(data):
     fileCount += 1
     fileLineCount = 0
-    fileName = os.path.join(outdir,prefix+'.'+str(fileCount)+'.noLowOccur' )
+    fileName = os.path.join(outdir,outputPrefix+'.'+str(fileCount)+'.noLowOccur' )
     with open(fileName,'w+',encoding='utf8') as f: 
         print('Processsing output %s' % fileName)
         while lineIterator < len(data) and fileLineCount <= linesPerFile:
