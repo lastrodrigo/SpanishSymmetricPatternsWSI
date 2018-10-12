@@ -70,7 +70,6 @@ testPrefix = args.testPrefix
 trainTokens = args.trainTokens
 testTokens= args.testTokens
 splitFiles = args.splitFiles
-vocabFile = args.vocab
 minOccurrence = args.minOccurrence
 keepNonLatin = args.keepNonLatin
 path = args.path[0]
@@ -159,7 +158,7 @@ with open(os.path.join(outdir,'freqWords.txt'),'w+',encoding='utf8') as f:
     xs = [(k,freqWords[k]) for k in sorted(freqWords, key=freqWords.get, reverse=True)]
     for x in xs:
         f.write(x[0]+' '+str(x[1])+'\n')
-        
+
 tokensPerFile = math.trunc(trainTokens / splitFiles)
 
 lineCount = 0
