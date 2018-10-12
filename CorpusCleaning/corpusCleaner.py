@@ -51,12 +51,13 @@ def writeShuffledFile(tokens,tokensPerFile,data,directory,prefix,lineCount,vocab
 
 parser = argparse.ArgumentParser(description='Clean corpus')
 parser.add_argument('path',metavar='Path to corpus',type=str, nargs=1)
-parser.add_argument('--foreignTokens',action='store_true',)
 parser.add_argument('--trainTokens',default=800000000)
 parser.add_argument('--testTokens',default=200000000)
 parser.add_argument('--splitFiles',default=100)
 parser.add_argument('--trainPrefix',default='trainingCorpus')
 parser.add_argument('--testPrefix',default='testingCorpus')
+parser.add_argument('--vocab')
+parser.add_argument('--minOccurrence',6)
 args = parser.parse_args()
 
 trainPrefix = args.trainPrefix
@@ -64,7 +65,20 @@ testPrefix = args.testPrefix
 trainTokens = args.trainTokens
 testTokens= args.testTokens
 splitFiles = args.splitFiles
+vocabFile = args.vocab
+minOccurrence = args.minOccurrence
 path = args.path[0]
+
+validWords = []
+if args.vocab is not None:
+    with open(vocabFile,'r',encoding='utf8') as f:
+        print('Processing vocabulary file')
+        content = f.readlines()
+        content = [x.strip() for x in content]
+        for line in content:
+            word,occurrences = line.split()
+            if occurrences >= minOccurrence:
+                validWords.append(word)
 
 if os.path.isfile(path):
     files = [path]
@@ -73,7 +87,7 @@ elif os.path.isdir(path):
     files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
 
 else:
-    print("No files found")
+    print("No corpus found")
 
 outdir = 'out'
 if not os.path.exists(outdir) or not os.path.isdir(outdir):
@@ -86,8 +100,8 @@ if not os.path.exists(os.path.join(outdir,'testing')) or not os.path.isdir(os.pa
     os.makedirs(os.path.join(outdir,'testing'))
 
 fileCount = 0
-foreignTokenCount = 0
-foreignWords = dict()
+invalidTokenCount = 0
+
 
 data = []
 for file in files:
@@ -98,32 +112,19 @@ for file in files:
         content = f.readlines()
         content = [x.strip() for x in content]
         for line in content:
-                hasForeignToken = False
+            hasInvalidToken = False
+            if args.vocab is not None: 
                 for word in line.split():
-                    if not args.foreignTokens: 
-                        
-                        if not only_roman_chars(word):
-                            foreignTokenCount += 1
-                            hasForeignToken = True
-                            if  word in foreignWords:
-                                foreignWords[word] += 1
-                            else:
-                                foreignWords[word] = 1
-                if not hasForeignToken:
-                    data.extend([(random.random(),line)])
+                    if not word in validWords:
+                        invalidTokenCount += 1
+                        hasInvalidToken = True
+            if not hasInvalidToken:
+                data.extend([(random.random(),line)])
                     
         
 
-if not args.foreignTokens:
-    print('Foreign tokens occurrences: %d' % foreignTokenCount)
-    print('Foreign tokens %d'% len(foreignWords))
-
-    with open(os.path.join(outdir,'foreign.txt'),'w+',encoding='utf8') as f:
-        f.write('Foreign tokens occurrences: %d \n' % foreignTokenCount)
-        f.write('Foreign tokens %d \n'% len(foreignWords))
-        xs = [(k,foreignWords[k]) for k in sorted(foreignWords, key=foreignWords.get, reverse=True)]
-        for x in xs:
-            f.write(x[0] +' '+str(x[1])+'\n')
+if args.vocab is not None:
+    print('Invalid token occurrences: %d' % invalidTokenCount)
 
 data.sort()
 
