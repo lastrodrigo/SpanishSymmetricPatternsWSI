@@ -132,6 +132,8 @@ for file in files:
                                 unFreqWords[word] += 1
                         else:
                             unFreqWords[word] = 1
+                    else:
+                        freqWords[word] +=1
                 line += 1
                 data.extend([(random.random(),line)])
                     
@@ -148,6 +150,16 @@ with open(os.path.join(outdir,'nonLatin.txt'),'w+',encoding='utf8') as f:
 
 data.sort()
 
+print('Frequent word occurrences: %d' % sum(freqWords.values()))
+print('Frequent words: %d' % len(freqWords))
+
+with open(os.path.join(outdir,'freqWords.txt'),'w+',encoding='utf8') as f:
+    f.write('Frequent word occurrences: %d\n' % sum(freqWords.values()))
+    f.write('Frequent words: %d\n' % len(freqWords))
+    xs = [(k,freqWords[k]) for k in sorted(freqWords, key=freqWords.get, reverse=True)]
+    for x in xs:
+        f.write(x[0]+' '+str(x[1])+'\n')
+        
 tokensPerFile = math.trunc(trainTokens / splitFiles)
 
 lineCount = 0
