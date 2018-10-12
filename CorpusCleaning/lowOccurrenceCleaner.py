@@ -45,13 +45,13 @@ for file in files:
                 if not word in freqWords: 
                     if word in unFreqWords:
                         if unFreqWords[word] == threshold:
-                            freqWords.extend(word)
+                            freqWords.append(word)
                             unFreqWords.pop(word)
                         else:
                             unFreqWords[word] += 1
                     else:
                         unFreqWords[word] = 1
-            data.extend(line)
+            data.append(line)
 
 print('Low occurrence (<= %d) tokens occurrences: %d' % sum(unFreqWords.values))
 print('Low occurrence tokens %d'% len(unFreqWords))
