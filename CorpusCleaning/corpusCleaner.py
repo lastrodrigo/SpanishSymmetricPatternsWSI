@@ -69,7 +69,7 @@ vocabFile = args.vocab
 minOccurrence = args.minOccurrence
 path = args.path[0]
 
-validWords = []
+validWords = dict()
 if args.vocab is not None:
     with open(vocabFile,'r',encoding='utf8') as f:
         print('Processing vocabulary file')
@@ -78,7 +78,7 @@ if args.vocab is not None:
         for line in content:
             word,occurrences = line.split()
             if int(occurrences) >= minOccurrence:
-                validWords.append(word)
+                validWords[word] = 1
 
 if os.path.isfile(path):
     files = [path]
