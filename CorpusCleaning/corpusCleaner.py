@@ -61,7 +61,6 @@ parser.add_argument('--testTokens',default=200000000)
 parser.add_argument('--splitFiles',default=100)
 parser.add_argument('--trainPrefix',default='trainingCorpus')
 parser.add_argument('--testPrefix',default='testingCorpus')
-parser.add_argument('--vocab')
 parser.add_argument('--minOccurrence',default=6)
 parser.add_argument('--keepNonLatin', action="store_true")
 args = parser.parse_args()
@@ -76,16 +75,6 @@ minOccurrence = args.minOccurrence
 keepNonLatin = args.keepNonLatin
 path = args.path[0]
 
-"""validWords = dict()
-if args.vocab is not None:
-    with open(vocabFile,'r',encoding='utf8') as f:
-        print('Processing vocabulary file')
-        content = f.readlines()
-        content = [x.strip() for x in content]
-        for line in content:
-            word,occurrences = line.split()
-            if int(occurrences) >= minOccurrence:
-                validWords[word] = 1"""
 
 if os.path.isfile(path):
     files = [path]
@@ -150,9 +139,9 @@ for file in files:
 print('Foreign tokens occurrences: %d' % foreignTokenCount)
 print('Foreign tokens %d'% len(foreignWords))
 
-with open(os.path.join(outdir,'foreign.txt'),'w+',encoding='utf8') as f:
-    f.write('Foreign tokens occurrences: %d \n' % foreignTokenCount)
-    f.write('Foreign tokens %d \n'% len(foreignWords))
+with open(os.path.join(outdir,'nonLatin.txt'),'w+',encoding='utf8') as f:
+    f.write('Non latin tokens occurrences: %d \n' % foreignTokenCount)
+    f.write('Non latin tokens %d \n'% len(foreignWords))
     xs = [(k,foreignWords[k]) for k in sorted(foreignWords, key=foreignWords.get, reverse=True)]
     for x in xs:
         f.write(x[0] +' '+str(x[1])+'\n')
