@@ -57,7 +57,7 @@ parser.add_argument('--splitFiles',default=100)
 parser.add_argument('--trainPrefix',default='trainingCorpus')
 parser.add_argument('--testPrefix',default='testingCorpus')
 parser.add_argument('--vocab')
-parser.add_argument('--minOccurrence',6)
+parser.add_argument('--minOccurrence',default=6)
 args = parser.parse_args()
 
 trainPrefix = args.trainPrefix
@@ -77,7 +77,7 @@ if args.vocab is not None:
         content = [x.strip() for x in content]
         for line in content:
             word,occurrences = line.split()
-            if occurrences >= minOccurrence:
+            if int(occurrences) >= minOccurrence:
                 validWords.append(word)
 
 if os.path.isfile(path):
