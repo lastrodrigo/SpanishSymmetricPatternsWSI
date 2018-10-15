@@ -1,0 +1,310 @@
+python3 corpusCleaner.py out-foreignTokenCleaner --vocabOccurrences vocab-freq.txt
+Processing vocabulary file: vocab-freq.txt
+Processing out-foreignTokenCleaner/spanish_billion_words_16.noForeign (1 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_30.noForeign (2 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_12.noForeign (3 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_42.noForeign (4 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_59.noForeign (5 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_00.noForeign (6 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_13.noForeign (7 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_86.noForeign (8 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_51.noForeign (9 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_25.noForeign (10 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_06.noForeign (11 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_15.noForeign (12 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_32.noForeign (13 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_91.noForeign (14 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_98.noForeign (15 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_81.noForeign (16 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_66.noForeign (17 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_62.noForeign (18 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_20.noForeign (19 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_97.noForeign (20 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_22.noForeign (21 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_55.noForeign (22 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_49.noForeign (23 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_82.noForeign (24 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_75.noForeign (25 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_73.noForeign (26 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_08.noForeign (27 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_07.noForeign (28 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_47.noForeign (29 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_88.noForeign (30 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_45.noForeign (31 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_85.noForeign (32 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_23.noForeign (33 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_92.noForeign (34 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_14.noForeign (35 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_37.noForeign (36 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_29.noForeign (37 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_52.noForeign (38 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_10.noForeign (39 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_44.noForeign (40 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_89.noForeign (41 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_93.noForeign (42 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_56.noForeign (43 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_17.noForeign (44 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_09.noForeign (45 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_39.noForeign (46 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_46.noForeign (47 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_83.noForeign (48 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_71.noForeign (49 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_80.noForeign (50 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_95.noForeign (51 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_34.noForeign (52 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_72.noForeign (53 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_68.noForeign (54 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_53.noForeign (55 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_28.noForeign (56 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_50.noForeign (57 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_90.noForeign (58 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_48.noForeign (59 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_94.noForeign (60 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_33.noForeign (61 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_99.noForeign (62 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_21.noForeign (63 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_38.noForeign (64 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_41.noForeign (65 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_05.noForeign (66 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_01.noForeign (67 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_27.noForeign (68 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_18.noForeign (69 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_26.noForeign (70 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_35.noForeign (71 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_74.noForeign (72 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_96.noForeign (73 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_65.noForeign (74 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_31.noForeign (75 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_43.noForeign (76 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_60.noForeign (77 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_77.noForeign (78 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_69.noForeign (79 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_84.noForeign (80 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_36.noForeign (81 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_64.noForeign (82 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_40.noForeign (83 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_61.noForeign (84 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_76.noForeign (85 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_79.noForeign (86 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_63.noForeign (87 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_87.noForeign (88 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_57.noForeign (89 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_04.noForeign (90 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_54.noForeign (91 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_11.noForeign (92 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_58.noForeign (93 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_03.noForeign (94 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_70.noForeign (95 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_78.noForeign (96 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_19.noForeign (97 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_02.noForeign (98 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_67.noForeign (99 in 100)
+Processing out-foreignTokenCleaner/spanish_billion_words_24.noForeign (100 in 100)
+High occurrence words: 790287
+Valid lines: 42803142
+Processsing output out/training/trainingCorpus.1.clean.shuffled
+Processsing output out/training/trainingCorpus.2.clean.shuffled
+Processsing output out/training/trainingCorpus.3.clean.shuffled
+Processsing output out/training/trainingCorpus.4.clean.shuffled
+Processsing output out/training/trainingCorpus.5.clean.shuffled
+Processsing output out/training/trainingCorpus.6.clean.shuffled
+Processsing output out/training/trainingCorpus.7.clean.shuffled
+Processsing output out/training/trainingCorpus.8.clean.shuffled
+Processsing output out/training/trainingCorpus.9.clean.shuffled
+Processsing output out/training/trainingCorpus.10.clean.shuffled
+Processsing output out/training/trainingCorpus.11.clean.shuffled
+Processsing output out/training/trainingCorpus.12.clean.shuffled
+Processsing output out/training/trainingCorpus.13.clean.shuffled
+Processsing output out/training/trainingCorpus.14.clean.shuffled
+Processsing output out/training/trainingCorpus.15.clean.shuffled
+Processsing output out/training/trainingCorpus.16.clean.shuffled
+Processsing output out/training/trainingCorpus.17.clean.shuffled
+Processsing output out/training/trainingCorpus.18.clean.shuffled
+Processsing output out/training/trainingCorpus.19.clean.shuffled
+Processsing output out/training/trainingCorpus.20.clean.shuffled
+Processsing output out/training/trainingCorpus.21.clean.shuffled
+Processsing output out/training/trainingCorpus.22.clean.shuffled
+Processsing output out/training/trainingCorpus.23.clean.shuffled
+Processsing output out/training/trainingCorpus.24.clean.shuffled
+Processsing output out/training/trainingCorpus.25.clean.shuffled
+Processsing output out/training/trainingCorpus.26.clean.shuffled
+Processsing output out/training/trainingCorpus.27.clean.shuffled
+Processsing output out/training/trainingCorpus.28.clean.shuffled
+Processsing output out/training/trainingCorpus.29.clean.shuffled
+Processsing output out/training/trainingCorpus.30.clean.shuffled
+Processsing output out/training/trainingCorpus.31.clean.shuffled
+Processsing output out/training/trainingCorpus.32.clean.shuffled
+Processsing output out/training/trainingCorpus.33.clean.shuffled
+Processsing output out/training/trainingCorpus.34.clean.shuffled
+Processsing output out/training/trainingCorpus.35.clean.shuffled
+Processsing output out/training/trainingCorpus.36.clean.shuffled
+Processsing output out/training/trainingCorpus.37.clean.shuffled
+Processsing output out/training/trainingCorpus.38.clean.shuffled
+Processsing output out/training/trainingCorpus.39.clean.shuffled
+Processsing output out/training/trainingCorpus.40.clean.shuffled
+Processsing output out/training/trainingCorpus.41.clean.shuffled
+Processsing output out/training/trainingCorpus.42.clean.shuffled
+Processsing output out/training/trainingCorpus.43.clean.shuffled
+Processsing output out/training/trainingCorpus.44.clean.shuffled
+Processsing output out/training/trainingCorpus.45.clean.shuffled
+Processsing output out/training/trainingCorpus.46.clean.shuffled
+Processsing output out/training/trainingCorpus.47.clean.shuffled
+Processsing output out/training/trainingCorpus.48.clean.shuffled
+Processsing output out/training/trainingCorpus.49.clean.shuffled
+Processsing output out/training/trainingCorpus.50.clean.shuffled
+Processsing output out/training/trainingCorpus.51.clean.shuffled
+Processsing output out/training/trainingCorpus.52.clean.shuffled
+Processsing output out/training/trainingCorpus.53.clean.shuffled
+Processsing output out/training/trainingCorpus.54.clean.shuffled
+Processsing output out/training/trainingCorpus.55.clean.shuffled
+Processsing output out/training/trainingCorpus.56.clean.shuffled
+Processsing output out/training/trainingCorpus.57.clean.shuffled
+Processsing output out/training/trainingCorpus.58.clean.shuffled
+Processsing output out/training/trainingCorpus.59.clean.shuffled
+Processsing output out/training/trainingCorpus.60.clean.shuffled
+Processsing output out/training/trainingCorpus.61.clean.shuffled
+Processsing output out/training/trainingCorpus.62.clean.shuffled
+Processsing output out/training/trainingCorpus.63.clean.shuffled
+Processsing output out/training/trainingCorpus.64.clean.shuffled
+Processsing output out/training/trainingCorpus.65.clean.shuffled
+Processsing output out/training/trainingCorpus.66.clean.shuffled
+Processsing output out/training/trainingCorpus.67.clean.shuffled
+Processsing output out/training/trainingCorpus.68.clean.shuffled
+Processsing output out/training/trainingCorpus.69.clean.shuffled
+Processsing output out/training/trainingCorpus.70.clean.shuffled
+Processsing output out/training/trainingCorpus.71.clean.shuffled
+Processsing output out/training/trainingCorpus.72.clean.shuffled
+Processsing output out/training/trainingCorpus.73.clean.shuffled
+Processsing output out/training/trainingCorpus.74.clean.shuffled
+Processsing output out/training/trainingCorpus.75.clean.shuffled
+Processsing output out/training/trainingCorpus.76.clean.shuffled
+Processsing output out/training/trainingCorpus.77.clean.shuffled
+Processsing output out/training/trainingCorpus.78.clean.shuffled
+Processsing output out/training/trainingCorpus.79.clean.shuffled
+Processsing output out/training/trainingCorpus.80.clean.shuffled
+Processsing output out/training/trainingCorpus.81.clean.shuffled
+Processsing output out/training/trainingCorpus.82.clean.shuffled
+Processsing output out/training/trainingCorpus.83.clean.shuffled
+Processsing output out/training/trainingCorpus.84.clean.shuffled
+Processsing output out/training/trainingCorpus.85.clean.shuffled
+Processsing output out/training/trainingCorpus.86.clean.shuffled
+Processsing output out/training/trainingCorpus.87.clean.shuffled
+Processsing output out/training/trainingCorpus.88.clean.shuffled
+Processsing output out/training/trainingCorpus.89.clean.shuffled
+Processsing output out/training/trainingCorpus.90.clean.shuffled
+Processsing output out/training/trainingCorpus.91.clean.shuffled
+Processsing output out/training/trainingCorpus.92.clean.shuffled
+Processsing output out/training/trainingCorpus.93.clean.shuffled
+Processsing output out/training/trainingCorpus.94.clean.shuffled
+Processsing output out/training/trainingCorpus.95.clean.shuffled
+Processsing output out/training/trainingCorpus.96.clean.shuffled
+Processsing output out/training/trainingCorpus.97.clean.shuffled
+Processsing output out/training/trainingCorpus.98.clean.shuffled
+Processsing output out/training/trainingCorpus.99.clean.shuffled
+Processsing output out/training/trainingCorpus.100.clean.shuffled
+Training tokens: 800000005
+Training lines: 27311447
+Processsing output out/testing/testingCorpus.1.clean.shuffled
+Processsing output out/testing/testingCorpus.2.clean.shuffled
+Processsing output out/testing/testingCorpus.3.clean.shuffled
+Processsing output out/testing/testingCorpus.4.clean.shuffled
+Processsing output out/testing/testingCorpus.5.clean.shuffled
+Processsing output out/testing/testingCorpus.6.clean.shuffled
+Processsing output out/testing/testingCorpus.7.clean.shuffled
+Processsing output out/testing/testingCorpus.8.clean.shuffled
+Processsing output out/testing/testingCorpus.9.clean.shuffled
+Processsing output out/testing/testingCorpus.10.clean.shuffled
+Processsing output out/testing/testingCorpus.11.clean.shuffled
+Processsing output out/testing/testingCorpus.12.clean.shuffled
+Processsing output out/testing/testingCorpus.13.clean.shuffled
+Processsing output out/testing/testingCorpus.14.clean.shuffled
+Processsing output out/testing/testingCorpus.15.clean.shuffled
+Processsing output out/testing/testingCorpus.16.clean.shuffled
+Processsing output out/testing/testingCorpus.17.clean.shuffled
+Processsing output out/testing/testingCorpus.18.clean.shuffled
+Processsing output out/testing/testingCorpus.19.clean.shuffled
+Processsing output out/testing/testingCorpus.20.clean.shuffled
+Processsing output out/testing/testingCorpus.21.clean.shuffled
+Processsing output out/testing/testingCorpus.22.clean.shuffled
+Processsing output out/testing/testingCorpus.23.clean.shuffled
+Processsing output out/testing/testingCorpus.24.clean.shuffled
+Processsing output out/testing/testingCorpus.25.clean.shuffled
+Processsing output out/testing/testingCorpus.26.clean.shuffled
+Processsing output out/testing/testingCorpus.27.clean.shuffled
+Processsing output out/testing/testingCorpus.28.clean.shuffled
+Processsing output out/testing/testingCorpus.29.clean.shuffled
+Processsing output out/testing/testingCorpus.30.clean.shuffled
+Processsing output out/testing/testingCorpus.31.clean.shuffled
+Processsing output out/testing/testingCorpus.32.clean.shuffled
+Processsing output out/testing/testingCorpus.33.clean.shuffled
+Processsing output out/testing/testingCorpus.34.clean.shuffled
+Processsing output out/testing/testingCorpus.35.clean.shuffled
+Processsing output out/testing/testingCorpus.36.clean.shuffled
+Processsing output out/testing/testingCorpus.37.clean.shuffled
+Processsing output out/testing/testingCorpus.38.clean.shuffled
+Processsing output out/testing/testingCorpus.39.clean.shuffled
+Processsing output out/testing/testingCorpus.40.clean.shuffled
+Processsing output out/testing/testingCorpus.41.clean.shuffled
+Processsing output out/testing/testingCorpus.42.clean.shuffled
+Processsing output out/testing/testingCorpus.43.clean.shuffled
+Processsing output out/testing/testingCorpus.44.clean.shuffled
+Processsing output out/testing/testingCorpus.45.clean.shuffled
+Processsing output out/testing/testingCorpus.46.clean.shuffled
+Processsing output out/testing/testingCorpus.47.clean.shuffled
+Processsing output out/testing/testingCorpus.48.clean.shuffled
+Processsing output out/testing/testingCorpus.49.clean.shuffled
+Processsing output out/testing/testingCorpus.50.clean.shuffled
+Processsing output out/testing/testingCorpus.51.clean.shuffled
+Processsing output out/testing/testingCorpus.52.clean.shuffled
+Processsing output out/testing/testingCorpus.53.clean.shuffled
+Processsing output out/testing/testingCorpus.54.clean.shuffled
+Processsing output out/testing/testingCorpus.55.clean.shuffled
+Processsing output out/testing/testingCorpus.56.clean.shuffled
+Processsing output out/testing/testingCorpus.57.clean.shuffled
+Processsing output out/testing/testingCorpus.58.clean.shuffled
+Processsing output out/testing/testingCorpus.59.clean.shuffled
+Processsing output out/testing/testingCorpus.60.clean.shuffled
+Processsing output out/testing/testingCorpus.61.clean.shuffled
+Processsing output out/testing/testingCorpus.62.clean.shuffled
+Processsing output out/testing/testingCorpus.63.clean.shuffled
+Processsing output out/testing/testingCorpus.64.clean.shuffled
+Processsing output out/testing/testingCorpus.65.clean.shuffled
+Processsing output out/testing/testingCorpus.66.clean.shuffled
+Processsing output out/testing/testingCorpus.67.clean.shuffled
+Processsing output out/testing/testingCorpus.68.clean.shuffled
+Processsing output out/testing/testingCorpus.69.clean.shuffled
+Processsing output out/testing/testingCorpus.70.clean.shuffled
+Processsing output out/testing/testingCorpus.71.clean.shuffled
+Processsing output out/testing/testingCorpus.72.clean.shuffled
+Processsing output out/testing/testingCorpus.73.clean.shuffled
+Processsing output out/testing/testingCorpus.74.clean.shuffled
+Processsing output out/testing/testingCorpus.75.clean.shuffled
+Processsing output out/testing/testingCorpus.76.clean.shuffled
+Processsing output out/testing/testingCorpus.77.clean.shuffled
+Processsing output out/testing/testingCorpus.78.clean.shuffled
+Processsing output out/testing/testingCorpus.79.clean.shuffled
+Processsing output out/testing/testingCorpus.80.clean.shuffled
+Processsing output out/testing/testingCorpus.81.clean.shuffled
+Processsing output out/testing/testingCorpus.82.clean.shuffled
+Processsing output out/testing/testingCorpus.83.clean.shuffled
+Processsing output out/testing/testingCorpus.84.clean.shuffled
+Processsing output out/testing/testingCorpus.85.clean.shuffled
+Processsing output out/testing/testingCorpus.86.clean.shuffled
+Processsing output out/testing/testingCorpus.87.clean.shuffled
+Processsing output out/testing/testingCorpus.88.clean.shuffled
+Processsing output out/testing/testingCorpus.89.clean.shuffled
+Processsing output out/testing/testingCorpus.90.clean.shuffled
+Processsing output out/testing/testingCorpus.91.clean.shuffled
+Processsing output out/testing/testingCorpus.92.clean.shuffled
+Processsing output out/testing/testingCorpus.93.clean.shuffled
+Processsing output out/testing/testingCorpus.94.clean.shuffled
+Processsing output out/testing/testingCorpus.95.clean.shuffled
+Processsing output out/testing/testingCorpus.96.clean.shuffled
+Processsing output out/testing/testingCorpus.97.clean.shuffled
+Processsing output out/testing/testingCorpus.98.clean.shuffled
+Processsing output out/testing/testingCorpus.99.clean.shuffled
+Processsing output out/testing/testingCorpus.100.clean.shuffled
+Testing tokens: 200000008
+Testing lines: 6830386
+Words in vocabulary: 777439
+

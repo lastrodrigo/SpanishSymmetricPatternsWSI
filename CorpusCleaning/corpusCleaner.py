@@ -7,18 +7,6 @@ import math
 latin_letters = {}
 
 
-def is_latin(uchr):
-    try:
-        return latin_letters[uchr]
-    except KeyError:
-        return latin_letters.setdefault(uchr, 'LATIN' in ud.name(uchr))
-
-
-def only_roman_chars(unistr):
-    return all(is_latin(uchr)
-               for uchr in unistr
-               if uchr.isalpha())
-
 def  word_count(word,counts):
     """Adds 1 to the occurrences of word in str in the dictionary counts"""
 
@@ -39,30 +27,26 @@ def writeShuffledFile(tokens,tokensPerFile,data,directory,prefix,lineCount,vocab
         with open(fileName,'w+',encoding='utf8') as f:
             print('Processsing output %s' % fileName)
             while tokenCount < tokensPerFile and totalTokenCount < tokens and lineCount < len(data):
-                hasUnfrequentWord = False
-                line = data[lineCount][1]
+                line = data[lineCount]
+                f.write(line+'\n')
+                lines += 1
+                tokenCount += len(line.split())
                 for word in line.split():
-                    if not word in freqWords:
-                        hasUnfrequentWord = True
-                if not hasUnfrequentWord:
-                    f.write(line+'\n')
-                    lines += 1
-                    tokenCount += len(line.split())
-                    for word in line.split():
-                        vocab = word_count(word,vocab) 
-                    totalTokenCount += len(line.split())
+                    vocab = word_count(word,vocab) 
+                totalTokenCount += len(line.split())
                 lineCount += 1
     return totalTokenCount,lineCount,vocab,lines
 
-parser = argparse.ArgumentParser(description='Clean corpus')
+parser = argparse.ArgumentParser(description='Clean and shuffle corpus')
 parser.add_argument('path',metavar='Path to corpus',type=str, nargs=1)
 parser.add_argument('--trainTokens',default=800000000)
 parser.add_argument('--testTokens',default=200000000)
 parser.add_argument('--splitFiles',default=100)
 parser.add_argument('--trainPrefix',default='trainingCorpus')
 parser.add_argument('--testPrefix',default='testingCorpus')
-parser.add_argument('--minOccurrence',default=8)
-parser.add_argument('--keepNonLatin', action="store_true")
+parser.add_argument('--minOccurrence',default=7)
+parser.add_argument('--vocabOccurrences')
+
 args = parser.parse_args()
 
 trainPrefix = args.trainPrefix
@@ -71,9 +55,20 @@ trainTokens = args.trainTokens
 testTokens= args.testTokens
 splitFiles = args.splitFiles
 minOccurrence = args.minOccurrence
-keepNonLatin = args.keepNonLatin
-path = args.path[0]
 
+path = args.path[0]
+validWords = dict()
+if args.vocabOccurrences is not None:
+
+    vocabFile = args.vocabOccurrences
+    print('Processing vocabulary file: %s' % vocabFile)
+    with open(vocabFile,'r',encoding='utf8') as f:
+        content = f.readlines()
+        content = [x.strip() for x in content]
+        for line in content:
+            word,occurrences = line.split()
+            if int(occurrences) >= minOccurrence:
+                validWords[word] = int(occurrences)
 
 if os.path.isfile(path):
     files = [path]
@@ -95,12 +90,8 @@ if not os.path.exists(os.path.join(outdir,'testing')) or not os.path.isdir(os.pa
     os.makedirs(os.path.join(outdir,'testing'))
 
 fileCount = 0
-invalidTokenCount = 0
-foreignTokenCount = 0
-foreignWords = dict()
+validTokenCount = 0
 lines = 0
-freqWords = dict()
-unFreqWords = dict()
 data = []
 for file in files:
     fileCount += 1
@@ -110,54 +101,21 @@ for file in files:
         content = f.readlines()
         content = [x.strip() for x in content]
         for line in content:
-            hasForeignToken = False
-            if not keepNonLatin:
-                for word in line.split():
-                    if not only_roman_chars(word):
-                        foreignTokenCount += 1
-                        hasForeignToken = True
-                        if  word in foreignWords:
-                            foreignWords[word] += 1
-                        else:
-                            foreignWords[word] = 1
-            if not hasForeignToken:
-                for word in line.split():
-                    if not word in freqWords: 
-                        if word in unFreqWords:
-                            if unFreqWords[word] == minOccurrence -1 :
-                                freqWords[word] = 1
-                                unFreqWords.pop(word)
-                            else:
-                                unFreqWords[word] += 1
-                        else:
-                            unFreqWords[word] = 1
-                    else:
-                        freqWords[word] +=1
+            hasInvalidWord = False
+            for word in line.split():
+                if not word in validWords: 
+                    hasInvalidWord = True
+            if not hasInvalidWord:
                 lines += 1
-                data.extend([(random.random(),line)])
-                    
-        
-print('Foreign tokens occurrences: %d' % foreignTokenCount)
-print('Foreign tokens %d'% len(foreignWords))
+                data.append(line)
 
-with open(os.path.join(outdir,'nonLatin.txt'),'w+',encoding='utf8') as f:
-    f.write('Non latin tokens occurrences: %d \n' % foreignTokenCount)
-    f.write('Non latin tokens %d \n'% len(foreignWords))
-    xs = [(k,foreignWords[k]) for k in sorted(foreignWords, key=foreignWords.get, reverse=True)]
-    for x in xs:
-        f.write(x[0] +' '+str(x[1])+'\n')
+random.shuffle(data)
 
-data.sort()
-
-print('Frequent word occurrences: %d' % sum(freqWords.values()))
-print('Frequent words: %d' % len(freqWords))
-
+print('High occurrence words: %d' % len(validWords))
+print('Valid lines: %d' % lines)
 with open(os.path.join(outdir,'freqWords.txt'),'w+',encoding='utf8') as f:
-    f.write('Frequent word occurrences: %d\n' % sum(freqWords.values()))
-    f.write('Frequent words: %d\n' % len(freqWords))
-    xs = [(k,freqWords[k]) for k in sorted(freqWords, key=freqWords.get, reverse=True)]
-    for x in xs:
-        f.write(x[0]+' '+str(x[1])+'\n')
+    f.write('High occurrence words: %d\n' % len(validWords))
+    f.write('Valid lines: %d\n' % lines)
 
 tokensPerFile = math.trunc(trainTokens / splitFiles)
 
