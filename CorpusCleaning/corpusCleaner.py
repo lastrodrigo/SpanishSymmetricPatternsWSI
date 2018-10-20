@@ -44,7 +44,7 @@ parser.add_argument('--testTokens',default=200000000)
 parser.add_argument('--splitFiles',default=100)
 parser.add_argument('--trainPrefix',default='trainingCorpus')
 parser.add_argument('--testPrefix',default='testingCorpus')
-parser.add_argument('--minOccurrence',default=7)
+parser.add_argument('--minOccurrence',default=8)
 parser.add_argument('--vocabOccurrences')
 
 args = parser.parse_args()
