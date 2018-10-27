@@ -12,11 +12,11 @@ def main(args):
     vocab = load_vocab(args.vocab_file, 50)
 
     # define the options
-    batch_size = 128  # batch size for each GPU
+    batch_size = 64 # RL batch size for each GPU
     n_gpus = 1 #RL
 
     # number of tokens in training data (this for 1B Word Benchmark)
-    n_train_tokens = 1278552610 #RL for files 1 to 90 of shuffled corpus, according to corpus2voc
+    n_train_tokens = 3671268 #RL for files 1 to 90 of shuffled corpus, according to corpus2voc
 
     options = {
      'bidirectional': True,
@@ -50,7 +50,7 @@ def main(args):
      'n_train_tokens': n_train_tokens,
      'batch_size': batch_size,
      'n_tokens_vocab': vocab.size,
-     'unroll_steps': 20,
+     'unroll_steps': 10, #RL 20,
      'n_negative_samples_batch': 8192,
     }
 

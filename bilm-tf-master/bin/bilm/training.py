@@ -880,7 +880,7 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
 
             if batch_no % 1250 == 0:
                 summary_writer.add_summary(ret[3], batch_no)
-            if batch_no % 1 == 0:
+            if batch_no % 100 == 0:
                 # write the summaries to tensorboard and display perplexity
                 summary_writer.add_summary(ret[1], batch_no)
                 print("Batch %s, train_perplexity=%s" % (batch_no, ret[2]))
