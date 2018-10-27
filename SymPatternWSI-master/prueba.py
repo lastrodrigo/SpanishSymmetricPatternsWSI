@@ -1,3 +1,5 @@
+#prueba de levantar un modelo de lenguaje entrenado de bilm
+
 from spwsi.bilm_elmo import BilmElmo
 from spwsi.spwsi import DEFAULT_PARAMS, SPWSI
 from time import strftime
