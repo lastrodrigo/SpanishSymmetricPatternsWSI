@@ -137,10 +137,10 @@ class BilmElmo(Bilm):
             # w/ sym. patterns - include target word + "and" afterwards in both directions
             for _, (tokens, target_idx) in inst_id_sent_tuples:
                 # forward sentence
-                to_embed.append(tokens[:target_idx + 1] + ['and'])
+                to_embed.append(tokens[:target_idx + 1] + ['y']) #RL
 
                 # backward sentence
-                to_embed.append(['and'] + tokens[target_idx:])
+                to_embed.append(['y'] + tokens[target_idx:]) #RL
 
         logging.info('embedding %d sentences for target %s' % (len(to_embed), target))
         embedded = list(self.elmo.embed_sentences(to_embed, self.batch_size))

@@ -40,18 +40,20 @@ args = parser.parse_args()
 
 run_name = strftime("%m%d-%H%M%S") + ('-' + args.run_postfix if args.run_postfix else '')
 
-elmo_vocab_path = './resources/vocab-2016-09-10.txt'
-BilmElmo.create_lemmatized_vocabulary_if_needed(elmo_vocab_path)
-elmo_as_lm = BilmElmo(args.cuda_device, './resources/elmo_2x4096_512_2048cnn_2xhighway_softmax_weights.hdf5',
+elmo_vocab_path = '/home/rodrigo/Downloads/vocab-training.txt'
+#BilmElmo.create_lemmatized_vocabulary_if_needed(elmo_vocab_path)
+elmo_as_lm = BilmElmo(-1, '/home/rodrigo/Downloads/weights.hdf5',
                         elmo_vocab_path,
                         batch_size=args.lm_batch_size,
-                        cutoff_elmo_vocab=args.cutoff_lm_vocab)
-spwsi_runner = SPWSI(elmo_as_lm)
+                        cutoff_elmo_vocab=3329)
 
-scores = spwsi_runner.run(n_clusters=args.n_clusters, n_represent=args.n_represent,
-                            n_samples_side=args.n_samples_side, disable_lemmatization=args.disable_lemmatization,
-                            disable_tfidf=args.disable_tfidf,
-                            disable_symmetric_patterns=args.disable_symmetric_patterns,
-                            prediction_cutoff=args.prediction_cutoff,
-                            debug_dir=args.debug_dir, run_name=run_name,
-                            print_progress=True)
+inst_id_to_sentence = dict()
+inst_id_to_sentence[1] = (['le','debo','plata','al','banco'],4)
+
+results = elmo_as_lm.predict_sent_substitute_representatives(
+                inst_id_to_sentence, n_represent=args.n_represent,
+                n_samples_side=args.n_samples_side, disable_symmetric_patterns=args.disable_symmetric_patterns,
+                disable_lemmatiziation=args.disable_lemmatization,
+                prediction_cutoff=args.prediction_cutoff)
+
+print(results)
