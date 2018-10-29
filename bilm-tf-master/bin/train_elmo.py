@@ -16,7 +16,7 @@ def main(args):
     n_gpus = 1 #RL
 
     # number of tokens in training data (this for 1B Word Benchmark)
-    n_train_tokens = 3671268 #RL for files 1 to 90 of shuffled corpus, according to corpus2voc
+    n_train_tokens = 733672335 #RL for files 1 to 90 of shuffled corpus, according to corpus2voc
 
     options = {
      'bidirectional': True,
