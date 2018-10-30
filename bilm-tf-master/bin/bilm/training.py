@@ -763,12 +763,8 @@ def train(options, data, n_gpus, tf_save_dir, tf_log_dir,
     # do the training loop
     bidirectional = options.get('bidirectional', False)
 
-    #RL
-    config = tf.ConfigProto(allow_soft_placement=True)
-    config.gpu_options.allow_growth = True
-    config.gpu_options.per_process_gpu_memory_fraction = 0.7
-    with tf.Session(config= config) as sess:
-    #rl
+    with tf.Session(config=tf.ConfigProto(
+            allow_soft_placement=True)) as sess:
         sess.run(init)
 
         # load the checkpoint data if needed
