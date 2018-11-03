@@ -81,7 +81,7 @@ class BilmElmo(Bilm):
             logging.info('lemmatizing ELMo vocabulary')
             print('lemmatizing ELMo vocabulary')
             import spacy
-            nlp = spacy.load("en", disable=['ner', 'parser'])
+            nlp = spacy.load("es", disable=['ner', 'parser']) #RL
             new_vocab = []
             for spacyed in tqdm(
                     nlp.pipe(unlem, batch_size=1000, n_threads=multiprocessing.cpu_count()),

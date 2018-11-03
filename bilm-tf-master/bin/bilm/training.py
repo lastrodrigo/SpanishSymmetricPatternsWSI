@@ -1096,9 +1096,9 @@ def dump_weights(tf_save_dir, outfile):
 
         with h5py.File(outfile, 'w') as fout:
             for v in tf.trainable_variables():
-                if v.name.find('softmax') >= 0:
+                #if v.name.find('softmax') >= 0: RL
                     # don't dump these
-                    continue
+                #    continue RL
                 outname = _get_outname(v.name)
                 print("Saving variable {0} with name {1}".format(
                     v.name, outname))

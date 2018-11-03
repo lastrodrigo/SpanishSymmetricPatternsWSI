@@ -40,15 +40,16 @@ args = parser.parse_args()
 
 run_name = strftime("%m%d-%H%M%S") + ('-' + args.run_postfix if args.run_postfix else '')
 
-elmo_vocab_path = '/home/rodrigo/SpanishSymmetricPatternsWSI/CorpusCleaning/out-262144/vocab.txt'
-#BilmElmo.create_lemmatized_vocabulary_if_needed(elmo_vocab_path)
-elmo_as_lm = BilmElmo(-1, '/home/rodrigo/SpanishSymmetricPatternsWSI/bilm-tf-master/checkpoints/weights-262144-small.hdf5',
+elmo_vocab_path = '/home/rodrigo/pgrado/SpanishSymmetricPatternsWSI/CorpusCleaning/out-262144/vocab.txt'
+BilmElmo.create_lemmatized_vocabulary_if_needed(elmo_vocab_path)
+elmo_as_lm = BilmElmo(-1, '/home/rodrigo/pgrado/SpanishSymmetricPatternsWSI/bilm-tf-master/checkpoints/weights-262144-small-softmax.hdf5',
                         elmo_vocab_path,
                         batch_size=args.lm_batch_size,
                         cutoff_elmo_vocab=3329)
 
 inst_id_to_sentence = dict()
-inst_id_to_sentence[1] = (['le','debo','plata','al','banco'],4)
+testStr = 'Le debo plata al banco'
+inst_id_to_sentence['banco'] = (testStr.split(),4)
 
 results = elmo_as_lm.predict_sent_substitute_representatives(
                 inst_id_to_sentence, n_represent=args.n_represent,
