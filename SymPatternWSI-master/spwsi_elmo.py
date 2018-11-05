@@ -37,6 +37,13 @@ if __name__ == '__main__':
     parser.add_argument('--cutoff-lm-vocab', dest='cutoff_lm_vocab', type=int,
                         default=DEFAULT_PARAMS['cutoff_lm_vocab'],
                         help='optimization: only use top K words for faster output matrix multiplication')
+    #+RL
+    parser.add_argument('--elmo-vocab-path',dest='elmo_vocab_path', type=str,default='./resources/vocab-2016-09-10.txt'
+                        help='path to elmo trainng vocabulary file')
+    parser.add_argument('--weights-path',dest='weights_path',type=str,
+                        default='./resources/elmo_2x4096_512_2048cnn_2xhighway_softmax_weights.hdf5',
+                        help='path to elmo softmax weights')
+    #-
     args = parser.parse_args()
 
     startmsg = 'BiLM Symmetric Patterns WSI Demo\n\n'
@@ -60,9 +67,9 @@ if __name__ == '__main__':
         root_logger.addHandler(handler)
     logging.info(startmsg)
 
-    elmo_vocab_path = './resources/vocab-2016-09-10.txt'
+    #RL elmo_vocab_path = './resources/vocab-2016-09-10.txt'
     BilmElmo.create_lemmatized_vocabulary_if_needed(elmo_vocab_path)
-    elmo_as_lm = BilmElmo(args.cuda_device, './resources/elmo_2x4096_512_2048cnn_2xhighway_softmax_weights.hdf5',
+    elmo_as_lm = BilmElmo(args.cuda_device, weights_path, #RL
                           elmo_vocab_path,
                           batch_size=args.lm_batch_size,
                           cutoff_elmo_vocab=args.cutoff_lm_vocab)
