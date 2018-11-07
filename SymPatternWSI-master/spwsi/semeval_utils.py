@@ -36,7 +36,7 @@ def generate_senseval_2(dir_path: str): #+RL
     nlp = spacy.load("es", disable=['ner','parser'])
     in_xml_path = os.path.join(dir_path,'test/test.xml')
     gold_key_path = os.path.join(dir_path,'key')
-    with open(in_xml_path,encoding='utf8') as fin_xml, open(gold_key_path, encoding="utf8") as fin_key:
+    with open(in_xml_path,encoding='ISO-8859-1') as fin_xml, open(gold_key_path, encoding="utf8") as fin_key:
         instid_in_key = set()
         for line in fin_key:
             lemma_pos, inst_id, _ = line.strip().split(maxsplit=2)
@@ -51,7 +51,7 @@ def generate_senseval_2(dir_path: str): #+RL
                 before, target, after = list(context.itertext())
                 before = [x.text for x in nlp(before.strip(),disable=['parser','tagger','ner'])]
                 target = target.strip()
-                after = [x.text for x in nlp(after.strip(), diable=['parser','tagger','ner'])]
+                after = [x.text for x in nlp(after.strip(), disable=['parser','tagger','ner'])]
                 yield before + [target] + after, len(before), inst_id
 
 def generate_sem_eval_2015(dir_path: str): #+RL
@@ -61,8 +61,8 @@ def generate_sem_eval_2015(dir_path: str): #+RL
     gold_key_path = os.path.join(dir_path,'keys/gold_keys/ES/semeval-2015-task-13-es-WSD.key')
     with open(in_xml_path, encoding="utf8") as fin_xml, open(gold_key_path, encoding="utf8") as fin_key:
         instid_in_key = set()
-        for line in fin_key:
-            lemma_pos, inst_id,
+        #for line in fin_key:
+            #lemma_pos, inst_id,
 
 def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: str = None) \
         -> Dict[str, Dict[str, float]]:

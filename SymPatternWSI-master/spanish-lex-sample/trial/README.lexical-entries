@@ -1,0 +1,15 @@
+The lexical entries have the following form:
+
+<HEADWORD>#<POS>#<SENSENUMBER>#<GLOSS&EXAMPLEs>#SIN:<SINONYMWORDs>#SYNSETNUM
+BERs#
+
+The dictionary for headword "arte" (= art) is:
+
+arte#NCMS#1#Actividad humana o producto de tal actividad que expresa
+simbolicamente un aspecto de la realidad: el arte de la musica; el arte
+precolombino#SIN:?#00518008n/02980374n#
+arte#NCMS#2#Sabiduria, destreza o habilidad de una persona en una
+actividad o conducta determinada: tiene mucho arte bailando; desplego
+todo su arte para convencerle#SIN:?#03850627n#
+arte#NCMS#3#Aparato que sirve para pescar#SIN:?#02005770n#
+
