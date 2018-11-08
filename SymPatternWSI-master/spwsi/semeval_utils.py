@@ -73,8 +73,21 @@ def generate_sem_eval_2015(dir_path: str): #+RL
                     if not inst_id in instid_in_key:
                         continue
                     before = str()
+                    afterTarget = False
+                    target = str()
+                    after = str()
                     for wfIter in sentence:
-                        while inst_id != wfIter.attrib["id"]
+                        if inst_id != wfIter.attrib["id"]:
+                            if not afterTarget:
+                                before += wfIter.text
+                            else:
+                                after += wfIter.text
+                        elif inst_id == wfIter.attrib["id"]:
+                            target = wfIter.text.strip()
+                            afterTarget = True
+                    before = [x.text for x in nlp(before.strip(), disable=['parser', 'tagger', 'ner'])]
+                    after = [x.text for x in nlp(after.strip(), disable=['parser','tagger','ner'])]
+                    print(before + [target] + after, len(before), inst_id)
 
 def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: str = None) \
         -> Dict[str, Dict[str, float]]:
@@ -134,7 +147,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
                 fout2.write('\n'.join(lines))
         return scores
 
-#gen = generate_senseval_2("/home/rodrigo/pgrado/SpanishSymmetricPatternsWSI/SymPatternWSI-master/spanish-lex-sample")
-#print(next(gen))
-#print(next(gen))
-generate_sem_eval_2015("/home/rodrigo/pgrado/SpanishSymmetricPatternsWSI/SymPatternWSI-master/SemEval-2015-task-13-v1.0")
+gen = generate_senseval_2(r"F:\SpanishSymmetricPatternsWSI\SymPatternWSI-master\spanish-lex-sample")
+print(next(gen))
+print(next(gen))
+#generate_sem_eval_2015("F:\SpanishSymmetricPatternsWSI\SymPatternWSI-master\SemEval-2015-task-13-v1.0")
