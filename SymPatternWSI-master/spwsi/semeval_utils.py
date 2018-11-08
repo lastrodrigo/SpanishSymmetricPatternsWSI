@@ -61,8 +61,20 @@ def generate_sem_eval_2015(dir_path: str): #+RL
     gold_key_path = os.path.join(dir_path,'keys/gold_keys/ES/semeval-2015-task-13-es-WSD.key')
     with open(in_xml_path, encoding="utf8") as fin_xml, open(gold_key_path, encoding="utf8") as fin_key:
         instid_in_key = set()
-        #for line in fin_key:
-            #lemma_pos, inst_id,
+        for line in fin_key:
+            #lemma_pos =
+            inst_id = line.strip().split(maxsplit= 1)[0]
+            instid_in_key.add(inst_id)
+        et_xml = ElementTree.parse(fin_xml)
+        for text in et_xml.getroot():
+            for sentence in text:
+                for wf in sentence:
+                    inst_id = wf.attrib["id"]
+                    if not inst_id in instid_in_key:
+                        continue
+                    before = str()
+                    for wfIter in sentence:
+                        while inst_id != wfIter.attrib["id"]
 
 def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: str = None) \
         -> Dict[str, Dict[str, float]]:
@@ -121,3 +133,8 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             with open(key_path, 'w', encoding="utf-8") as fout2:
                 fout2.write('\n'.join(lines))
         return scores
+
+#gen = generate_senseval_2("/home/rodrigo/pgrado/SpanishSymmetricPatternsWSI/SymPatternWSI-master/spanish-lex-sample")
+#print(next(gen))
+#print(next(gen))
+generate_sem_eval_2015("/home/rodrigo/pgrado/SpanishSymmetricPatternsWSI/SymPatternWSI-master/SemEval-2015-task-13-v1.0")
