@@ -38,11 +38,14 @@ if __name__ == '__main__':
                         default=DEFAULT_PARAMS['cutoff_lm_vocab'],
                         help='optimization: only use top K words for faster output matrix multiplication')
     #+RL
-    parser.add_argument('--elmo-vocab-path',dest='elmo_vocab_path', type=str,default='./resources/vocab-2016-09-10.txt'
-                        help='path to elmo trainng vocabulary file')
+    parser.add_argument('--elmo-vocab-path',dest='elmo_vocab_path', type=str,default='./resources/vocab-2016-09-10.txt',
+                        help='path to elmo training vocabulary file')
     parser.add_argument('--weights-path',dest='weights_path',type=str,
                         default='./resources/elmo_2x4096_512_2048cnn_2xhighway_softmax_weights.hdf5',
                         help='path to elmo softmax weights')
+    parser.add_argument('--task',dest='task',type=str, default='SE2SLS',
+                            help='Task selection, possible values: SE2SLS (default), SE2015T13, SE2013T3')
+    parser.add_argument('--taskPath',dest='taskPath',type=str, help='path to task resources directory')
     #-
     args = parser.parse_args()
 
@@ -68,9 +71,9 @@ if __name__ == '__main__':
     logging.info(startmsg)
 
     #RL elmo_vocab_path = './resources/vocab-2016-09-10.txt'
-    BilmElmo.create_lemmatized_vocabulary_if_needed(elmo_vocab_path)
-    elmo_as_lm = BilmElmo(args.cuda_device, weights_path, #RL
-                          elmo_vocab_path,
+    BilmElmo.create_lemmatized_vocabulary_if_needed(args.elmo_vocab_path)
+    elmo_as_lm = BilmElmo(args.cuda_device, args.weights_path, #RL
+                          args.elmo_vocab_path,
                           batch_size=args.lm_batch_size,
                           cutoff_elmo_vocab=args.cutoff_lm_vocab)
     spwsi_runner = SPWSI(elmo_as_lm)
@@ -81,5 +84,6 @@ if __name__ == '__main__':
                               disable_symmetric_patterns=args.disable_symmetric_patterns,
                               prediction_cutoff=args.prediction_cutoff,
                               debug_dir=args.debug_dir, run_name=run_name,
+                              taskPath= args.taskPath, task= args.task, #RL added
                               print_progress=True)
     logging.info('full results: %s' % scores)

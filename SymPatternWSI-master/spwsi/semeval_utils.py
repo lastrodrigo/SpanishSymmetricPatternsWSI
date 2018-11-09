@@ -1,4 +1,4 @@
-import spacy
+#import spacy
 import os
 from xml.etree import ElementTree
 from typing import Dict
@@ -33,26 +33,39 @@ def generate_sem_eval_2013(dir_path: str):
 
 def generate_senseval_2(dir_path: str): #+RL
     logging.info('reading Senseval dataset from %s' % dir_path)
-    nlp = spacy.load("es", disable=['ner','parser'])
+    #nlp = spacy.load("es", disable=['ner','parser'])
     in_xml_path = os.path.join(dir_path,'test/test.xml')
     gold_key_path = os.path.join(dir_path,'key')
+    dict_path = os.path.join(dir_path,'test/senseval.dict')
     with open(in_xml_path,encoding='ISO-8859-1') as fin_xml, open(gold_key_path, encoding="utf8") as fin_key:
         instid_in_key = set()
-        for line in fin_key:
-            lemma_pos, inst_id, _ = line.strip().split(maxsplit=2)
-            instid_in_key.add(inst_id)
+        lemmas = dict()
+        with open(dict_path,encoding='ISO-8859-1') as fin_dict:
+            for line in fin_key:
+                lemma_pos, inst_id, _ = line.strip().split(maxsplit=2)
+                if not lemma_pos in lemmas:
+                    for line in fin_dict:
+                        if line.split('#')[0] == lemma_pos:
+                            pos = line.split('#')[1][0].lower()
+                            if pos == 'a':
+                                pos= 'j'
+                            lemmas[lemma_pos] = pos
+                instid_in_key.add(inst_id)
+        print(lemmas)
         et_xml = ElementTree.parse(fin_xml)
         for word in et_xml.getroot():
             for inst in word.getchildren():
                 inst_id = inst.attrib['id']
                 if inst_id not in instid_in_key:
                     continue
+                lemma_pos = inst_id.split('.')[0]
+                lemma_pos += '.' + lemmas[lemma_pos] 
                 context = inst.find("context")
                 before, target, after = list(context.itertext())
-                before = [x.text for x in nlp(before.strip(),disable=['parser','tagger','ner'])]
+                #before = [x.text for x in nlp(before.strip(),disable=['parser','tagger','ner'])]
                 target = target.strip()
-                after = [x.text for x in nlp(after.strip(), disable=['parser','tagger','ner'])]
-                yield before + [target] + after, len(before), inst_id
+                #after = [x.text for x in nlp(after.strip(), disable=['parser','tagger','ner'])]
+                yield before.split() + [target] + after.split(), len(before), inst_id, lemma_pos
 
 def generate_sem_eval_2015(dir_path: str): #+RL
     logging.info('reading SemEval 2015 T13 dataset from %s' % dir_path)
@@ -146,3 +159,9 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             with open(key_path, 'w', encoding="utf-8") as fout2:
                 fout2.write('\n'.join(lines))
         return scores
+
+gen = generate_senseval_2(r'F:\spanish-lex-sample')
+_,_,_, lemma_pos = next(gen)
+while lemma_pos != '':
+    print(lemma_pos)
+    _,_,_,lemma_pos= next(gen) 

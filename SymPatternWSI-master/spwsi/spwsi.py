@@ -36,9 +36,9 @@ class SPWSI:
     def __init__(self, bilm: Bilm):
         self.bilm = bilm
 
-    def run(self, n_clusters, n_represent, n_samples_side, disable_tfidf, debug_dir, run_name,
-            disable_symmetric_patterns, disable_lemmatization, prediction_cutoff,
-            print_progress=False,task= SENSEVAL_2_SLS): #RL added task
+    def run(#self, n_clusters, n_represent, n_samples_side, disable_tfidf, debug_dir, run_name,
+            #disable_symmetric_patterns, disable_lemmatization, prediction_cutoff,
+            taskPath,task= SENSEVAL_2_SLS,print_progress=False,): #RL added task and taskPath
 
         semeval_dataset_by_target = defaultdict(dict)
 
@@ -56,8 +56,13 @@ class SPWSI:
                 lemma_pos = inst_id.rsplit('.', 1)[0]
                 semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
         #+RL
-        elsif task == SENSEVAL_2_SLS:
-        elsif task == SEMEVAL_2015_T13:
+        elif task == SENSEVAL_2_SLS:
+            for tokens, target_idx, inst_id, lemma_pos in generate_senseval_2(taskPath):
+                lemma_pos = inst_id.split('.')[0] 
+                print(lemma_pos)
+        elif task == SEMEVAL_2015_T13:
+            pass
+        return
         #-
         
         inst_id_to_sense = {}
@@ -84,3 +89,7 @@ class SPWSI:
         if print_progress:
             print(msg)
         return scores
+
+bilm = Bilm()
+spwsi = SPWSI(bilm)
+spwsi.run('F:\spanish-lex-sample',)
