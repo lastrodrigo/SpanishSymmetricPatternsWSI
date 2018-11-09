@@ -95,14 +95,14 @@ class BilmElmo(Bilm):
 
     def _warm_up_elmo(self):
         # running a few sentences in elmo will set it to a better state than initial zeros
-        warm_up_sent = "En efecto, rematado ya su juicio, vino a dar en el más " \
-                       "extraño pensamiento que jamás dio loco en el mundo; y fue que " \
-                       "le pareció convenible y necesario, así para el aumento de su honra " \
-                       "como para el servicio de su república, hacerse caballero andante, e irse " \
+        warm_up_sent = "En efecto , rematado ya su juicio , vino a dar en el más " \
+                       "extraño pensamiento que jamás dio loco en el mundo ; y fue que " \
+                       "le pareció convenible y necesario , así para el aumento de su honra " \
+                       "como para el servicio de su república , hacerse caballero andante , e irse " \
                        "por todo el mundo con sus armas y caballo a buscar las " \
                        "aventuras y a ejercitarse en todo aquello que él había leído que " \
-                       "los caballeros andantes se ejercitaban, deshaciendo todo género de agravio, y poniéndose " \
-                       "en ocasiones y peligros donde, acabándolos, cobrase eterno nombre y fama .".split()
+                       "los caballeros andantes se ejercitaban , deshaciendo todo género de agravio , y poniéndose " \
+                       "en ocasiones y peligros donde , acabándolos , cobrase eterno nombre y fama .".split()
         for _ in range(3):
             _ = list(self.elmo.embed_sentences([warm_up_sent] * self.batch_size, self.batch_size))
 

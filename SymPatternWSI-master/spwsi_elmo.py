@@ -3,7 +3,7 @@ import argparse
 import os
 import logging
 from time import strftime
-from spwsi.spwsi import DEFAULT_PARAMS, SPWSI
+from spwsi.spwsi import DEFAULT_PARAMS, SPWSI, Task #RL added Task
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='BiLM Symmetric Patterns WSI Demo',

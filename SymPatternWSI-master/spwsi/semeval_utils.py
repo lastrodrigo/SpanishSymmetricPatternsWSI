@@ -79,15 +79,15 @@ def generate_sem_eval_2015(dir_path: str): #+RL
                     for wfIter in sentence:
                         if inst_id != wfIter.attrib["id"]:
                             if not afterTarget:
-                                before += wfIter.text
+                                before += ' ' + wfIter.text
                             else:
-                                after += wfIter.text
+                                after += ' ' + wfIter.text
                         elif inst_id == wfIter.attrib["id"]:
                             target = wfIter.text.strip()
                             afterTarget = True
                     before = [x.text for x in nlp(before.strip(), disable=['parser', 'tagger', 'ner'])]
                     after = [x.text for x in nlp(after.strip(), disable=['parser','tagger','ner'])]
-                    print(before + [target] + after, len(before), inst_id)
+                    yield before + [target] + after, len(before), inst_id
 
 def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: str = None) \
         -> Dict[str, Dict[str, float]]:
@@ -146,8 +146,3 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             with open(key_path, 'w', encoding="utf-8") as fout2:
                 fout2.write('\n'.join(lines))
         return scores
-
-gen = generate_senseval_2(r"F:\SpanishSymmetricPatternsWSI\SymPatternWSI-master\spanish-lex-sample")
-print(next(gen))
-print(next(gen))
-#generate_sem_eval_2015("F:\SpanishSymmetricPatternsWSI\SymPatternWSI-master\SemEval-2015-task-13-v1.0")

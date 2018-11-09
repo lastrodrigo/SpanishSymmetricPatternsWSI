@@ -7,6 +7,15 @@ import logging
 import os
 import numpy as np
 
+#+RL
+from enum import Enum 
+
+class Task(Enum):
+    SENSEVAL_2_SLS = 'SE2SLS'
+    SEMEVAL_2015_T13 = 'SE2015T13'
+    SEMEVAL_2013_T13 = 'SE2013T13'
+#-
+
 DEFAULT_PARAMS = dict(
     n_clusters=7,
     n_represent=20,
@@ -29,7 +38,7 @@ class SPWSI:
 
     def run(self, n_clusters, n_represent, n_samples_side, disable_tfidf, debug_dir, run_name,
             disable_symmetric_patterns, disable_lemmatization, prediction_cutoff,
-            print_progress=False):
+            print_progress=False,task= SENSEVAL_2_SLS): #RL added task
 
         semeval_dataset_by_target = defaultdict(dict)
 
@@ -42,10 +51,15 @@ class SPWSI:
         # and the index of book in these tokens
 
         # load all dataset to memory
-        for tokens, target_idx, inst_id in generate_sem_eval_2013('./resources/SemEval-2013-Task-13-test-data'):
-            lemma_pos = inst_id.rsplit('.', 1)[0]
-            semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
-
+        if task == SEMEVAL_2013_T13: #RL
+            for tokens, target_idx, inst_id in generate_sem_eval_2013('./resources/SemEval-2013-Task-13-test-data'):
+                lemma_pos = inst_id.rsplit('.', 1)[0]
+                semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
+        #+RL
+        elsif task == SENSEVAL_2_SLS:
+        elsif task == SEMEVAL_2015_T13:
+        #-
+        
         inst_id_to_sense = {}
         gen = semeval_dataset_by_target.items()
         if print_progress:
