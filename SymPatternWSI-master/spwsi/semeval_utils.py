@@ -56,7 +56,6 @@ def generate_senseval_2(dir_path: str): #+RL
                             lemmas[lemma_pos] = pos
                             break
             instid_in_key.add(inst_id)
-        print(lemmas)
         et_xml = ElementTree.parse(fin_xml)
         for word in et_xml.getroot():
             for inst in word.getchildren():
