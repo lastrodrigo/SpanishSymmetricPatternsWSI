@@ -155,7 +155,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
         lines = []
         for instance_id, clusters_dict in labeling.items():
             clusters = sorted(clusters_dict.items(), key=lambda x: x[1])
-            if Task == SEMEVAL_2013_T13:
+            if Task == SEMEVAL_2013_T13: #RL
                 clusters_str = ' '.join([('%s/%d' % (cluster_name, count)) for cluster_name, count in clusters])
                 lemma_pos = instance_id.rsplit('.', 1)[0]
                 lines.append('%s %s %s' % (lemma_pos, instance_id, clusters_str))
