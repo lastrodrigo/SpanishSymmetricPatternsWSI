@@ -80,8 +80,9 @@ def generate_sem_eval_2015(dir_path: str): #+RL
         instid_in_key = set()
         for line in fin_key:
             #lemma_pos =
-            inst_id = line.strip().split(maxsplit= 1)[0]
-            instid_in_key.add(inst_id)
+            if line.strip().split(maxsplit= 2)[0] == line.strip().split(maxsplit=2)[1]:
+                inst_id = line.strip().split(maxsplit= 2)[0]
+                instid_in_key.add(inst_id)
         et_xml = ElementTree.parse(fin_xml)
         for text in et_xml.getroot():
             for sentence in text:
@@ -89,6 +90,9 @@ def generate_sem_eval_2015(dir_path: str): #+RL
                     inst_id = wf.attrib["id"]
                     if not inst_id in instid_in_key:
                         continue
+                    lemma = wf.attrib["lemma"]
+                    pos = wf.attrib["pos"].lower()
+                    lemma_pos = lemma + '.' + pos
                     before = str()
                     afterTarget = False
                     target = str()
@@ -104,10 +108,10 @@ def generate_sem_eval_2015(dir_path: str): #+RL
                             afterTarget = True
                     before = [x.text for x in nlp(before.strip(), disable=['parser', 'tagger', 'ner'])]
                     after = [x.text for x in nlp(after.strip(), disable=['parser','tagger','ner'])]
-                    yield before + [target] + after, len(before), inst_id
+                    yield before + [target] + after, len(before), inst_id,lemma_pos
 
-def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: str = None) \
-        -> Dict[str, Dict[str, float]]:
+def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: str = None, task: str) \ 
+        -> Dict[str, Dict[str, float]]: #RL task added
     """
     labeling example : {'become.v.3': {'become.sense.1':3,'become.sense.5':17} ... }
     means instance become.v.3' is 17/20 in sense 'become.sense.5' and 3/20 in sense 'become.sense.1'

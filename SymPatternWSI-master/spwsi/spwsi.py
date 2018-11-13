@@ -36,8 +36,8 @@ class SPWSI:
     def __init__(self, bilm: Bilm):
         self.bilm = bilm
 
-    def run(#self, n_clusters, n_represent, n_samples_side, disable_tfidf, debug_dir, run_name,
-            #disable_symmetric_patterns, disable_lemmatization, prediction_cutoff,
+    def run(self, n_clusters, n_represent, n_samples_side, disable_tfidf, debug_dir, run_name,
+            disable_symmetric_patterns, disable_lemmatization, prediction_cutoff,
             taskPath,task= SENSEVAL_2_SLS,print_progress=False,): #RL added task and taskPath
 
         semeval_dataset_by_target = defaultdict(dict)
@@ -58,11 +58,10 @@ class SPWSI:
         #+RL
         elif task == SENSEVAL_2_SLS:
             for tokens, target_idx, inst_id, lemma_pos in generate_senseval_2(taskPath):
-                lemma_pos = inst_id.split('.')[0] 
-                print(lemma_pos)
+                semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
         elif task == SEMEVAL_2015_T13:
-            pass
-        return
+            for tokens, target_idx, inst_id, lemma_pos in generate_sem_eval_2015(taskPath):
+                semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
         #-
         
         inst_id_to_sense = {}
@@ -79,7 +78,12 @@ class SPWSI:
         out_key_path = None
         if debug_dir:
             out_key_path = os.path.join(debug_dir, run_name + '.key')
-        scores = evaluate_labeling('./resources/SemEval-2013-Task-13-test-data', inst_id_to_sense, out_key_path)
+        if task == SEMEVAL_2013_T13: #RL
+            scores = evaluate_labeling('./resources/SemEval-2013-Task-13-test-data', inst_id_to_sense, out_key_path)
+        #+RL
+        elif task in [SENSEVAL_2_SLS,SEMEVAL_2015_T13]:
+            scores = evaluate_labeling(taskPath,inst_id_to_sense,out_key_path,task)
+        #-
         if print_progress:
             print('written SemEval key file to %s' % out_key_path)
         fnmi = scores['all']['FNMI']
@@ -89,7 +93,3 @@ class SPWSI:
         if print_progress:
             print(msg)
         return scores
-
-bilm = Bilm()
-spwsi = SPWSI(bilm)
-spwsi.run('F:\spanish-lex-sample',)
