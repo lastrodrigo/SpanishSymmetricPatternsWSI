@@ -1,0 +1,66 @@
+
+Format specification SENSEVAL-2 results
+
+The results of a system's processing should be reported in a single
+file corresponding to the evaluation data file, with one line for each
+test instance in the evaluation data.  The lines in this results file
+do not have to be in any particular order.
+
+Each line should include the following items, in the specified order:
+
+1. reference id for the task (depending on lex-sample or all-words)
+2. a single space
+3. reference number for test instance (depending on lex-sample or all-words)
+4. a single space
+5. list of sense tags with or without weights
+6. an optional comment
+
+If the sense-tag list is weighted, the weights (given as integers or
+real numbers, and separated by a "/" from the sense tag) will be
+normalised.  That is, they will be treated as probabilities.  If any
+of the sense tags are missing weights, then none of the weights will
+be used.  When there are no weights, a uniform distribution is used.
+
+In case the results file contains two or more lines for the same
+reference number from the same evaluation file, the first such line
+will be counted as the system's answer and the subsequent lines will
+be disregarded.
+
+---------------------------------------------------------------------
+
+Examples of well-formed lines:
+
+bother 00001 501566
+bother 00002 501566     999997     !!
+bother 00006 501566/0.5 501573/0.4 503751/0.1
+bother 00015 503751/94  999999/87             !! comment . . .
+
+---------------------------------------------------------------------
+
+
+If you are into BNF, here's a precise definition:
+
+<lexical_sample_answer>
+   ::= <lexelt> <instance_id> <sense_tag_list> [!! <comment>]
+
+<all_words_answer>
+   ::= <text_id> <head_id> <sense_tag_list> [!! <comment>]
+
+<lexelt> ::= lexical element (as defined in the lex-sample evaluation data)
+<instance_id> ::= instance id (as defined in the lex-sample evaluaiton data)
+<text_id> ::= text id (as defined in the all-words evaluation data)
+<head_id> ::= head id (as defined in the all-words evaluation data)
+
+<sense_tag_list> ::= <weighted_list> | <unweighted_list>
+<weighted_list> ::= <senseid>[/weight] {<senseid>[/weight]}
+<unweighted_list> ::= <senseid> {<senseid>}
+
+<senseid> ::= senseid from the lexicon for the task
+<weight> ::= integer or positive real number
+<comment> ::= text string
+
+
+
+
+
+

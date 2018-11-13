@@ -5,7 +5,7 @@ from typing import Dict
 import tempfile
 import subprocess
 import logging
-
+from spwsi import Task #RL
 
 def generate_sem_eval_2013(dir_path: str):
     logging.info('reading SemEval dataset from %s' % dir_path)
@@ -110,7 +110,7 @@ def generate_sem_eval_2015(dir_path: str): #+RL
                     after = [x.text for x in nlp(after.strip(), disable=['parser','tagger','ner'])]
                     yield before + [target] + after, len(before), inst_id,lemma_pos
 
-def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: str = None, task: str) \ 
+def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: str = None, task: Task) \
         -> Dict[str, Dict[str, float]]: #RL task added
     """
     labeling example : {'become.v.3': {'become.sense.1':3,'become.sense.5':17} ... }
@@ -155,9 +155,14 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
         lines = []
         for instance_id, clusters_dict in labeling.items():
             clusters = sorted(clusters_dict.items(), key=lambda x: x[1])
-            clusters_str = ' '.join([('%s/%d' % (cluster_name, count)) for cluster_name, count in clusters])
-            lemma_pos = instance_id.rsplit('.', 1)[0]
-            lines.append('%s %s %s' % (lemma_pos, instance_id, clusters_str))
+            if Task == SEMEVAL_2013_T13:
+                clusters_str = ' '.join([('%s/%d' % (cluster_name, count)) for cluster_name, count in clusters])
+                lemma_pos = instance_id.rsplit('.', 1)[0]
+                lines.append('%s %s %s' % (lemma_pos, instance_id, clusters_str))
+            #+RL
+            elif Task == SENSEVAL_2_SLS:
+                clusters_str = ' '.join([('%s/%d' % (clusters[0][0], clusters[0][1]))])
+            #-
         fout.write('\n'.join(lines))
         fout.flush()
         scores = get_scores(os.path.join(dir_path, 'keys/gold/all.key'),
