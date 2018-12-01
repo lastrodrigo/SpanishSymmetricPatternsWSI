@@ -5,7 +5,16 @@ from typing import Dict
 import tempfile
 import subprocess
 import logging
-from spwsi import Task #RL
+from jnius import autoclass #RL
+
+#+RL
+from enum import Enum 
+
+class Task(Enum):
+    SENSEVAL_2_SLS = 'SE2SLS'
+    SEMEVAL_2015_T13 = 'SE2015T13'
+    SEMEVAL_2013_T13 = 'SE2013T13'
+#-
 
 def generate_sem_eval_2013(dir_path: str):
     logging.info('reading SemEval dataset from %s' % dir_path)
@@ -110,7 +119,7 @@ def generate_sem_eval_2015(dir_path: str): #+RL
                     after = [x.text for x in nlp(after.strip(), disable=['parser','tagger','ner'])]
                     yield before + [target] + after, len(before), inst_id,lemma_pos
 
-def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: str = None, task: Task) \
+def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: str = None, task=Task.SENSEVAL_2_SLS) \
         -> Dict[str, Dict[str, float]]: #RL task added
     """
     labeling example : {'become.v.3': {'become.sense.1':3,'become.sense.5':17} ... }
@@ -121,7 +130,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
     :return: FNMI, FBC as calculated by SemEval provided code
     """
     logging.info('starting evaluation key_path: %s' % key_path)
-
+    
     def get_scores(gold_key, eval_key):
         ret = {}
         for metric, jar, column in [
@@ -151,17 +160,74 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
 
         return ret
 
+    def getGoldKeySENSEVAL2(lemma): #+RL
+        with open(os.path.join(dir_path,'key'),'r') as fgold:
+            goldKey = dict()
+            for line in fgold.readlines():
+                splitted = line.strip().split()
+                if splitted[0] == lemma:
+                    instance = dict()
+                    graded = dict()
+                    graded[str(splitted[2])] = 1.0
+                    instance[splitted[1]] = graded 
+                    if not splitted[0] in goldKey:
+                        goldKey[splitted[0]] = instance
+                    else:
+                        goldKey[splitted[0]].update(instance)
+        return goldKey
+
+    def dictToJ(dictionary): #+RL
+        HashMap = autoclass('java.util.HashMap')
+        String = autoclass('java.lang.String')
+        Double = autoclass('java.lang.Double')
+        map = HashMap()
+        for token, instances in dictionary.items():
+            jToken = String(token)
+            instanceMap = HashMap()
+            for instance, labels in instances.items():
+                jInstance = String(instance)
+                labelMap = HashMap()
+                for label, applicability in labels.items():
+                    jLabel = String(label)
+                    jApplicability = Double(applicability)
+                    labelMap.put(jLabel,jApplicability)
+                instanceMap.put(jInstance,labelMap)
+            map.put(jToken,instanceMap)
+        return map
+
     with tempfile.NamedTemporaryFile('wt') as fout:
         lines = []
+        #+RL
+        prevLemma = str()
+        GradedSingleSenseKeyMapper = autoclass('edu.ucla.clustercomparison.GradedSingleSenseKeyMapper')
+        mapper = GradedSingleSenseKeyMapper()
+        #-
         for instance_id, clusters_dict in labeling.items():
             clusters = sorted(clusters_dict.items(), key=lambda x: x[1])
-            if Task == SEMEVAL_2013_T13: #RL
+            if task is Task.SEMEVAL_2013_T13: #RL
                 clusters_str = ' '.join([('%s/%d' % (cluster_name, count)) for cluster_name, count in clusters])
                 lemma_pos = instance_id.rsplit('.', 1)[0]
                 lines.append('%s %s %s' % (lemma_pos, instance_id, clusters_str))
             #+RL
-            elif Task == SENSEVAL_2_SLS:
-                clusters_str = ' '.join([('%s/%d' % (clusters[0][0], clusters[0][1]))])
+            elif task is Task.SENSEVAL_2_SLS:
+                lemma = instance_id.split('.')[0]
+                if lemma != prevLemma:
+                    lemmaGoldKey = getGoldKeySENSEVAL2(lemma)
+                    goldMap = dictToJ(lemmaGoldKey)
+                    wordLabeling = {lemma:labeling}
+                    labelingMap = dictToJ(wordLabeling)
+                    HashSet = autoclass('java.util.HashSet')
+                    trainingInstanceIds = HashSet()
+                    trainingInstanceIds.add('actuar.000000')
+                    print('GoldMap= '+goldMap.toString())
+                    print('LabelingMap= '+labelingMap.toString())
+                    print('TrainingInstanceIds= '+trainingInstanceIds.toString())
+                    converted = mapper.convert(goldMap,labelingMap,trainingInstanceIds)
+                    convertedSet = converted.entrySet()
+                    convertedIterator = convertedSet.iterator()
+                    while convertedIterator.hasNext():
+                        print(convertedIterator.next().toString())
+                prevLemma = lemma
             #-
         fout.write('\n'.join(lines))
         fout.flush()
@@ -171,4 +237,4 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             logging.info('writing key to file %s' % key_path)
             with open(key_path, 'w', encoding="utf-8") as fout2:
                 fout2.write('\n'.join(lines))
-        return scores
+        return scores,task

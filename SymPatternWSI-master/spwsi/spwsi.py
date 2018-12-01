@@ -1,5 +1,5 @@
 from .bilm_interface import Bilm
-from spwsi.semeval_utils import generate_sem_eval_2013, evaluate_labeling
+from spwsi.semeval_utils import generate_sem_eval_2013, evaluate_labeling, Task #RL added Task
 from collections import defaultdict
 from .wsi_clustering import cluster_inst_ids_representatives
 from tqdm import tqdm
@@ -7,14 +7,7 @@ import logging
 import os
 import numpy as np
 
-#+RL
-from enum import Enum 
 
-class Task(Enum):
-    SENSEVAL_2_SLS = 'SE2SLS'
-    SEMEVAL_2015_T13 = 'SE2015T13'
-    SEMEVAL_2013_T13 = 'SE2013T13'
-#-
 
 DEFAULT_PARAMS = dict(
     n_clusters=7,
@@ -38,7 +31,7 @@ class SPWSI:
 
     def run(self, n_clusters, n_represent, n_samples_side, disable_tfidf, debug_dir, run_name,
             disable_symmetric_patterns, disable_lemmatization, prediction_cutoff,
-            taskPath,task= SENSEVAL_2_SLS,print_progress=False,): #RL added task and taskPath
+            taskPath,task:Task,print_progress=False,): #RL added task and taskPath
 
         semeval_dataset_by_target = defaultdict(dict)
 
@@ -51,15 +44,15 @@ class SPWSI:
         # and the index of book in these tokens
 
         # load all dataset to memory
-        if task == SEMEVAL_2013_T13: #RL
+        if task is Task.SEMEVAL_2013_T13: #RL
             for tokens, target_idx, inst_id in generate_sem_eval_2013('./resources/SemEval-2013-Task-13-test-data'):
                 lemma_pos = inst_id.rsplit('.', 1)[0]
                 semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
         #+RL
-        elif task == SENSEVAL_2_SLS:
+        elif task is Task.SENSEVAL_2_SLS:
             for tokens, target_idx, inst_id, lemma_pos in generate_senseval_2(taskPath):
                 semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
-        elif task == SEMEVAL_2015_T13:
+        elif task is Task.SEMEVAL_2015_T13:
             for tokens, target_idx, inst_id, lemma_pos in generate_sem_eval_2015(taskPath):
                 semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
         #-
@@ -78,10 +71,10 @@ class SPWSI:
         out_key_path = None
         if debug_dir:
             out_key_path = os.path.join(debug_dir, run_name + '.key')
-        if task == SEMEVAL_2013_T13: #RL
+        if task is Task.SEMEVAL_2013_T13: #RL
             scores = evaluate_labeling('./resources/SemEval-2013-Task-13-test-data', inst_id_to_sense, out_key_path)
         #+RL
-        elif task in [SENSEVAL_2_SLS,SEMEVAL_2015_T13]:
+        elif task in [Task.SENSEVAL_2_SLS,Task.SEMEVAL_2015_T13]:
             scores = evaluate_labeling(taskPath,inst_id_to_sense,out_key_path,task)
         #-
         if print_progress:
