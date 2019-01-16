@@ -134,8 +134,9 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
     logging.info('starting evaluation key_path: %s' % key_path)
     
     def get_scores(gold_key, eval_key,key_path,task): #RL task added
+        
+        ret = {}
         if task is Task.SEMEVAL_2013_T13: #RL
-            ret = {}
             for metric, jar, column in [
                 #         ('jaccard-index','SemEval-2013-Task-13-test-data/scoring/jaccard-index.jar'),
                 #         ('pos-tau', 'SemEval-2013-Task-13-test-data/scoring/positional-tau.jar'),
@@ -161,14 +162,28 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
                                 ret[word] = {}
                             ret[word][metric] = float(result)
 
-            return ret
         #+RL
         elif task is Task.SENSEVAL_2_SLS:
-            script = ["python2.7","./spanish-lex-sample/score/score", "f",key_path, gold_key]
-            process = subprocess.Popen(" ".join(script),shell=True, env={"PYTHONPATH":"."})
+            script = ["python2.7","./spanish-lex-sample/score/score",key_path, gold_key,'./sub']
+            res = subprocess.Popen(" ".join(script),shell=True, env={"PYTHONPATH":"."},stdout=subprocess.PIPE).stdout.readlines()
+            
+            ret['all']={}
+            splitted = res[2].strip().split()
+            ret['all']['precision'] = float(splitted[1])
+            ret['all']['correct'] = float(str(splitted[2].decode()).replace('(',''))
+            ret['all']['attempted'] = float(splitted[5])
+            splitted = res[3].strip().split()
+            ret['all']['recall'] = float(splitted[1])
+            ret['all']['total'] = float(splitted[5])
+            ret['all']['attemptedPct'] = float(splitted[1])
+        elif task is Task.SEMEVAL_2015_T13:
+            pass
+        #-
+        return ret
+            
 
-    def getGoldKeySENSEVAL2(lemma): #+RL
-        with open(os.path.join(dir_path,'key'),'r') as fgold:
+    def getGoldKeySENSEVAL2(lemma,goldPath): #+RL
+        with open(os.path.join(dir_path,goldPath),'r') as fgold:
             goldKey = dict()
             for line in fgold.readlines():
                 splitted = line.strip().split()
@@ -261,7 +276,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
         elif task is Task.SEMEVAL_2013_T13:
             goldPath = 'keys/gold/all.key'
         elif task is Task.SEMEVAL_2015_T13:
-            pass
+            goldPath = 'keys/gold_keys/ES/semeval-2015-task-13-es-WSD.key'
         #-
         for instance_id, clusters_dict in labeling.items():
             clusters = sorted(clusters_dict.items(), key=lambda x: x[1])
@@ -272,7 +287,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             elif task is Task.SENSEVAL_2_SLS:
                 lemma = instance_id.split('.')[0]
                 if lemma != prevLemma:
-                    lemmaGoldKey = getGoldKeySENSEVAL2(lemma)
+                    lemmaGoldKey = getGoldKeySENSEVAL2(lemma,goldPath)
                     goldMap = dictToJ(lemmaGoldKey)
                     wordLabeling = {lemma:labeling}
                     labelingMap = dictToJ(wordLabeling)
@@ -282,7 +297,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
                 clusters_str = ' '.join([('%s' % allRemappedTestKey[instance_id][i][0]) for i in range(0,len(allRemappedTestKey[instance_id]))])
                 lemma_pos = lemma
             elif task is Task.SEMEVAL_2015_T13:
-                pass        
+                 
             #-
             lines.append('%s %s %s' % (lemma_pos, instance_id, clusters_str))
         fout.write('\n'.join(lines))
@@ -296,4 +311,4 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
         #-
         scores = get_scores(os.path.join(dir_path, goldPath), #'keys/gold/all.key'), RL goldPath added
                             fout.name, key_path,task) #RL key_path and task added
-        return scores,task
+        return scores
