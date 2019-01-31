@@ -182,20 +182,22 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
         return ret
             
 
-    def getGoldKeySENSEVAL2(lemma,goldPath): #+RL
+    def getGoldKeySENSEVAL2(goldPath): #+RL
         with open(os.path.join(dir_path,goldPath),'r') as fgold:
             goldKey = dict()
             for line in fgold.readlines():
                 splitted = line.strip().split()
-                if splitted[0] == lemma:
-                    instance = dict()
-                    graded = dict()
-                    graded[str(splitted[2])] = 1.0
-                    instance[splitted[1]] = graded 
-                    if not splitted[0] in goldKey:
-                        goldKey[splitted[0]] = instance
-                    else:
-                        goldKey[splitted[0]].update(instance)
+                #if splitted[0] == lemma:
+                instance = dict()
+                graded = dict()
+                rest = splitted[2:]
+                for index in rest:
+                    graded[index] = 1.0 / len(rest)
+                instance[splitted[1]] = graded 
+                if not splitted[0] in goldKey:
+                    goldKey[splitted[0]] = instance
+                else:
+                    goldKey[splitted[0]].update(instance)
         return goldKey
 
     def dictToJ(dictionary): #+RL
@@ -217,17 +219,8 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             map.put(jToken,instanceMap)
         return map
 
-    def getTrainingInstances(goldKey:dict,lemma:str): #+RL
-        keys = list(goldKey[lemma].keys())
-        random.shuffle(keys)
-        trainingSets = list(set() for _ in range(0,5))
-        for i in range(0,len(goldKey[lemma])):
-            instance = keys[i]
-            toExclude = i % len(trainingSets)
-            for j in range(0,len(trainingSets)):
-                if j == toExclude:
-                    continue
-                trainingSets[j].add(instance)
+    def getTrainingInstances(trainingSets): #+RL
+
         HashSet = autoclass('java.util.HashSet')
         String = autoclass('java.lang.String')
         listJTrainingSets = []
@@ -239,69 +232,110 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             listJTrainingSets.append(jTrainingSet)
         return listJTrainingSets
 
-    def mapSenses(listJTrainingSets,mapper,goldMap,labelingMap,allRemappedTestKey): #+RL
+    def printTrainingSets(listJTrainingSets): #+RL
+        trainingSet = 1
+        
         for trainingInstances in listJTrainingSets:
-            remappedTestKey = mapper.convert(goldMap,labelingMap,trainingInstances)
-            convertedSet = remappedTestKey.entrySet()
-            convertedIterator = convertedSet.iterator()
-            while convertedIterator.hasNext():
-                e = convertedIterator.next()
-                #doc = e.getKey()
-                instRatings = e.getValue()
-                instanceIterator = instRatings.entrySet().iterator()
-                while instanceIterator.hasNext():
-                    i = instanceIterator.next()
-                    instance = i.getKey()
-                    labelIterator = i.getValue().entrySet().iterator()
-                    labelList = []
-                    while labelIterator.hasNext():
-                        l = labelIterator.next()
-                        label = l.getKey()
-                        applicability = l.getValue()
-                        labelList.append((label,applicability))
-                    labelList.sort(key=lambda x:x[1],reverse=True)
-                    allRemappedTestKey[instance] = labelList
+            print('---------------------------------------------Training set %d \n' % trainingSet)
+            entrySetIterator = trainingInstances.iterator()
+            while entrySetIterator.hasNext():
+                e = entrySetIterator.next()
+                print(e+', ')
+            trainingSet += 1
+
+    def mapSenses(trainingInstances,goldMap,labelingMap): #+RL
+        GradedReweightedKeyMapper = autoclass('edu.ucla.clustercomparison.GradedReweightedKeyMapper')
+        mapper = GradedReweightedKeyMapper()
+        allRemappedTestKey = {}
+        remappedTestKey = mapper.convert(goldMap,labelingMap,trainingInstances)
+        #print(remappedTestKey)
+        convertedSet = remappedTestKey.entrySet()
+        convertedIterator = convertedSet.iterator()
+        while convertedIterator.hasNext():
+            e = convertedIterator.next()
+            doc = e.getKey()
+            instRatings = e.getValue()
+            instanceIterator = instRatings.entrySet().iterator()
+            while instanceIterator.hasNext():
+                i = instanceIterator.next()
+                instance = i.getKey()
+                labelIterator = i.getValue().entrySet().iterator()
+                labelList = []
+                while labelIterator.hasNext():
+                    l = labelIterator.next()
+                    label = l.getKey()
+                    applicability = l.getValue()
+                    labelList.append((label,applicability))
+                labelList.sort(key=lambda x:x[1],reverse=True)
+                allRemappedTestKey[instance] = labelList
         return allRemappedTestKey
 
     with tempfile.NamedTemporaryFile('wt') as fout:
         lines = []
         #+RL
-        prevLemma = str()
-        GradedReweightedKeyMapper = autoclass('edu.ucla.clustercomparison.GradedReweightedKeyMapper')
-        mapper = GradedReweightedKeyMapper()
-        random.seed(42)
-        allRemappedTestKey = dict()
         if task is Task.SENSEVAL_2_SLS:
             goldPath = 'key'
+            #SENSEVAL 2
+            goldKey = getGoldKeySENSEVAL2(goldPath)
+            allInstances = []
+            for _,v in goldKey.items():
+                for k1,_ in v.items():
+                    allInstances.append(k1)
+            indices = list(range(0,len(allInstances)-1))
+            random.seed(18)
+            random.shuffle(indices)
+            trainingSets = [set() for _ in range(0,5)]
+            for i in range(0,len(allInstances)):
+                instance = allInstances[i]
+                toExclude = i % len(trainingSets)
+                for j in range(0,len(trainingSets)):
+                    if j != toExclude:
+                        trainingSets[j].add(instance)
+            termToNumberSenses = {}
+            for e in goldKey.items():
+                term = e[0]
+                
+                senses = set()
+                for ratings in goldKey[term].values():
+                    for sense in ratings.keys():
+                        senses.update(sense)
+                
+                termToNumberSenses[term] = len(senses)
+            
+            
+            listJTrainingInstances = getTrainingInstances(trainingSets)
+            goldMap = dictToJ(goldKey)
+            lemmaLabeling = {}
+            for k,v in labeling.items():
+                lemma = k.split('.')[0]
+                if not lemma in lemmaLabeling:
+                    lemmaLabeling[lemma] = {k:v}
+                else:
+                    lemmaLabeling[lemma][k] = v
+            labelingMap = dictToJ(lemmaLabeling)
+            #print(trainingSets)
+            num = 1
+            for jTrainingInstances in listJTrainingInstances:
+                testKey = mapSenses(jTrainingInstances,goldMap,labelingMap)
+                lines = []
+                for instance, label in testKey.items():
+                    clusters_str = ' '.join(x[0] for x in label)
+                    lines.append('%s %s' % (instance,clusters_str))
+                 
+                logging.info('writing key to file %s' % key_path)
+                with open(key_path+str(num), 'w', encoding="utf-8") as fout2:
+                    fout2.write('\n'.join(lines))
+                num += 1
         elif task is Task.SEMEVAL_2013_T13:
-            goldPath = 'keys/gold/all.key'
-        elif task is Task.SEMEVAL_2015_T13:
-            goldPath = 'keys/gold_keys/ES/semeval-2015-task-13-es-WSD.key'
         #-
-        for instance_id, clusters_dict in labeling.items():
-            clusters = sorted(clusters_dict.items(), key=lambda x: x[1])
-            if task is Task.SEMEVAL_2013_T13: #RL
+            goldPath = 'keys/gold/all.key'
+            for instance_id, clusters_dict in labeling.items():
+                clusters = sorted(clusters_dict.items(), key=lambda x: x[1])
                 clusters_str = ' '.join([('%s/%d' % (cluster_name, count)) for cluster_name, count in clusters])
                 lemma_pos = instance_id.rsplit('.', 1)[0]
-            #+RL
-            elif task is Task.SENSEVAL_2_SLS:
-                lemma = instance_id.split('.')[0]
-                if lemma != prevLemma:
-                    lemmaGoldKey = getGoldKeySENSEVAL2(lemma,goldPath)
-                    goldMap = dictToJ(lemmaGoldKey)
-                    wordLabeling = {lemma:labeling}
-                    labelingMap = dictToJ(wordLabeling)
-                    listJTrainingSets = getTrainingInstances(lemmaGoldKey,lemma)
-                    allRemappedTestKey = mapSenses(listJTrainingSets,mapper,goldMap,labelingMap,allRemappedTestKey)
-                prevLemma = lemma
-                clusters_str = ' '.join([('%s' % allRemappedTestKey[instance_id][i][0]) for i in range(0,len(allRemappedTestKey[instance_id]))])
-                lemma_pos = lemma
-            elif task is Task.SEMEVAL_2015_T13:
-                 
-            #-
-            lines.append('%s %s %s' % (lemma_pos, instance_id, clusters_str))
-        fout.write('\n'.join(lines))
-        fout.flush()
+                lines.append('%s %s %s' % (lemma_pos, instance_id, clusters_str))
+            fout.write('\n'.join(lines))
+            fout.flush()
         
         #+RL moved from below get_scores call
         if key_path: 
@@ -312,3 +346,4 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
         scores = get_scores(os.path.join(dir_path, goldPath), #'keys/gold/all.key'), RL goldPath added
                             fout.name, key_path,task) #RL key_path and task added
         return scores
+
