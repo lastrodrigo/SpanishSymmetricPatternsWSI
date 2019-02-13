@@ -121,7 +121,7 @@ def generate_sem_eval_2015(dir_path: str): #+RL
                     after = [x.text for x in nlp(after.strip(), disable=['parser','tagger','ner'])]
                     yield before + [target] + after, len(before), inst_id,lemma_pos
 
-def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: str = None, task=Task.SENSEVAL_2_SLS) \
+def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: str = None, task=Task.SENSEVAL_2_SLS,maxLabels= 2) \
         -> Dict[str, Dict[str, float]]: #RL task added
     """
     labeling example : {'become.v.3': {'become.sense.1':3,'become.sense.5':17} ... }
@@ -133,7 +133,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
     """
     logging.info('starting evaluation key_path: %s' % key_path)
     
-    def get_scores(gold_key, eval_key,key_path,task): #RL task added
+    def get_scores(gold_key, eval_key,task): #RL task added
         
         ret = {}
         if task is Task.SEMEVAL_2013_T13: #RL
@@ -164,7 +164,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
 
         #+RL
         elif task is Task.SENSEVAL_2_SLS:
-            script = ["python2.7","./spanish-lex-sample/score/score",key_path, gold_key,'./sub']
+            script = ["python2.7","./spanish-lex-sample/score/score",eval_key, gold_key,'./spanish-lex-sample/test/emptysensemap']
             res = subprocess.Popen(" ".join(script),shell=True, env={"PYTHONPATH":"."},stdout=subprocess.PIPE).stdout.readlines()
             
             ret['all']={}
@@ -273,6 +273,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
     with tempfile.NamedTemporaryFile('wt') as fout:
         lines = []
         #+RL
+        #print(task)
         if task is Task.SENSEVAL_2_SLS:
             goldPath = 'key'
             #SENSEVAL 2
@@ -319,13 +320,18 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
                 testKey = mapSenses(jTrainingInstances,goldMap,labelingMap)
                 lines = []
                 for instance, label in testKey.items():
-                    clusters_str = ' '.join(x[0] for x in label)
-                    lines.append('%s %s' % (instance,clusters_str))
-                 
-                logging.info('writing key to file %s' % key_path)
-                with open(key_path+str(num), 'w', encoding="utf-8") as fout2:
+                    clusters_str = ' '.join(x[0] for x in label[0:maxLabels - 1])
+                    lines.append('%s %s %s' % (instance.split('.')[0],instance,clusters_str))
+                #print(lines)
+                evalKey = key_path+str(num)
+                logging.info('writing key to file %s' % evalKey)
+                
+                with open(evalKey, 'w', encoding="utf-8") as fout2:
                     fout2.write('\n'.join(lines))
+                scores = get_scores(os.path.join(dir_path, goldPath), #'keys/gold/all.key'), RL goldPath added
+                             evalKey,task) #RL  task added
                 num += 1
+                print(scores)
         elif task is Task.SEMEVAL_2013_T13:
         #-
             goldPath = 'keys/gold/all.key'
@@ -337,13 +343,14 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             fout.write('\n'.join(lines))
             fout.flush()
         
-        #+RL moved from below get_scores call
-        if key_path: 
-            logging.info('writing key to file %s' % key_path)
-            with open(key_path, 'w', encoding="utf-8") as fout2:
-                fout2.write('\n'.join(lines))
-        #-
-        scores = get_scores(os.path.join(dir_path, goldPath), #'keys/gold/all.key'), RL goldPath added
-                            fout.name, key_path,task) #RL key_path and task added
+            scores = get_scores(os.path.join(dir_path, goldPath), #'keys/gold/all.key'), RL goldPath added
+                            fout.name,task) #RL  task added
+
+            if key_path: 
+                logging.info('writing key to file %s' % key_path)
+                with open(key_path, 'w', encoding="utf-8") as fout2:
+                    fout2.write('\n'.join(lines))
+
+        
         return scores
 

@@ -8,3 +8,4 @@ SymPatternWSI-master/spwsi/__pycache__/bilm_interface.cpython-36.pyc
 CorpusCleaning/out-foreignTokenCleaner/*
 out*
 bilm-tf-master/checkpoints
+bilm-tf-master/result

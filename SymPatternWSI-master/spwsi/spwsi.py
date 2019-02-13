@@ -1,5 +1,5 @@
 from .bilm_interface import Bilm
-from spwsi.semeval_utils import generate_sem_eval_2013, evaluate_labeling, Task #RL added Task
+from spwsi.semeval_utils import generate_sem_eval_2013, evaluate_labeling, Task, generate_senseval_2 #RL added Task and generate_senseval_2
 from collections import defaultdict
 from .wsi_clustering import cluster_inst_ids_representatives
 from tqdm import tqdm
@@ -31,7 +31,7 @@ class SPWSI:
 
     def run(self, n_clusters, n_represent, n_samples_side, disable_tfidf, debug_dir, run_name,
             disable_symmetric_patterns, disable_lemmatization, prediction_cutoff,
-            taskPath,task:Task,print_progress=False,): #RL added task and taskPath
+            taskPath,task:Task,maxLabels,print_progress=False,): #RL added task, taskPath and maxLabels
 
         semeval_dataset_by_target = defaultdict(dict)
 
@@ -44,6 +44,7 @@ class SPWSI:
         # and the index of book in these tokens
 
         # load all dataset to memory
+        task = Task[task] #RL
         if task is Task.SEMEVAL_2013_T13: #RL
             for tokens, target_idx, inst_id in generate_sem_eval_2013('./resources/SemEval-2013-Task-13-test-data'):
                 lemma_pos = inst_id.rsplit('.', 1)[0]
@@ -71,18 +72,21 @@ class SPWSI:
         out_key_path = None
         if debug_dir:
             out_key_path = os.path.join(debug_dir, run_name + '.key')
+        
         if task is Task.SEMEVAL_2013_T13: #RL
             scores = evaluate_labeling('./resources/SemEval-2013-Task-13-test-data', inst_id_to_sense, out_key_path)
         #+RL
-        elif task in [Task.SENSEVAL_2_SLS,Task.SEMEVAL_2015_T13]:
-            scores = evaluate_labeling(taskPath,inst_id_to_sense,out_key_path,task)
+        elif task is Task.SENSEVAL_2_SLS:
+            out_key_path = 'mykey'
+            scores = evaluate_labeling(taskPath,inst_id_to_sense,out_key_path,task,maxLabels)
         #-
         if print_progress:
             print('written SemEval key file to %s' % out_key_path)
-        fnmi = scores['all']['FNMI']
-        fbc = scores['all']['FBC']
-        msg = 'results FNMI %.2f FBC %.2f AVG %.2f' % (fnmi * 100, fbc * 100, np.sqrt(fnmi * fbc) * 100)
-        logging.info(msg)
-        if print_progress:
-            print(msg)
+        if task is Task.SEMEVAL_2013_T13: #RL    
+            fnmi = scores['all']['FNMI']
+            fbc = scores['all']['FBC']
+            msg = 'results FNMI %.2f FBC %.2f AVG %.2f' % (fnmi * 100, fbc * 100, np.sqrt(fnmi * fbc) * 100)
+            logging.info(msg)
+            if print_progress:
+                print(msg)
         return scores
