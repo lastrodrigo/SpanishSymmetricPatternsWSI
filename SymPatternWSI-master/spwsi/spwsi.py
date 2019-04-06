@@ -31,7 +31,7 @@ class SPWSI:
 
     def run(self, n_clusters, n_represent, n_samples_side, disable_tfidf, debug_dir, run_name,
             disable_symmetric_patterns, disable_lemmatization, prediction_cutoff,
-            taskPath,task:Task,maxLabels,print_progress=False,): #RL added task, taskPath and maxLabels
+            taskPath,maxLabels,print_progress=False,): #RL added taskPath and maxLabels
 
         semeval_dataset_by_target = defaultdict(dict)
 
