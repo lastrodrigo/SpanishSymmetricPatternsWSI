@@ -1,5 +1,5 @@
 #RL from spwsi.bilm_elmo import BilmElmo
-from spwsi.elmo_many_langs import BilmElmo #+RL
+from spwsi.elmo_many_langs import ElmoManyLangs #+RL
 import argparse
 import os
 import logging
@@ -39,13 +39,14 @@ if __name__ == '__main__':
                         default=DEFAULT_PARAMS['cutoff_lm_vocab'],
                         help='optimization: only use top K words for faster output matrix multiplication')
     #+RL
-    parser.add_argument('--elmo-vocab-path',dest='elmo_vocab_path', type=str,default='./resources/vocab-2016-09-10.txt',
+    parser.add_argument('--elmo-vocab-path',dest='elmo_vocab_path', type=str,default='./pretrainedELMo/word.dic',
                         help='path to elmo training vocabulary file')
     parser.add_argument('--model-path',dest='model_path',type=str,
-                        default='',
+                        default='./pretrainedELMo',
                         help='path to model')
-    parser.add_argument('--taskPath',dest='taskPath',type=str, help='path to task resources directory')
+    parser.add_argument('--taskPath',dest='taskPath',type=str, default='./spanish-lex-sample',help='path to task resources directory')
     parser.add_argument('--maxLabels',dest='maxLabels',type=int, default= '2', help='max number of labels per instance to generate key')
+    parser.add_argument('--semfit-path',dest='semfit_path',type=str,default='./fastTextCC/sbwc.es.512.vec',help='path to embeddings for SEMFIT layer')
     #-
     args = parser.parse_args()
 
@@ -71,9 +72,10 @@ if __name__ == '__main__':
     logging.info(startmsg)
 
     #RL elmo_vocab_path = './resources/vocab-2016-09-10.txt'
-    BilmElmo.create_lemmatized_vocabulary_if_needed(args.elmo_vocab_path)
-    elmo_as_lm = BilmElmo(args.cuda_device, args.model_path, #RL
-                          args.elmo_vocab_path,
+    ElmoManyLangs.create_lemmatized_vocabulary_if_needed(args.elmo_vocab_path)
+    elmo_as_lm = ElmoManyLangs(args.cuda_device, args.model_path, #RL
+                          args.elmo_vocab_path, 
+                          args.semfit_path, #RL
                           batch_size=args.lm_batch_size,
                           cutoff_elmo_vocab=args.cutoff_lm_vocab)
     spwsi_runner = SPWSI(elmo_as_lm)
@@ -84,6 +86,8 @@ if __name__ == '__main__':
                               disable_symmetric_patterns=args.disable_symmetric_patterns,
                               prediction_cutoff=args.prediction_cutoff,
                               debug_dir=args.debug_dir, run_name=run_name,
-                              taskPath= args.taskPath, task= args.task, maxLabels= args.maxLabels, #RL added
+                              taskPath= args.taskPath, maxLabels= args.maxLabels, #RL added
                               print_progress=True)
     logging.info('full results: %s' % scores)
+
+            

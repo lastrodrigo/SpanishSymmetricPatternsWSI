@@ -44,18 +44,19 @@ class SPWSI:
         # and the index of book in these tokens
 
         # load all dataset to memory
-        task = Task[task] #RL
-        if task is Task.SEMEVAL_2013_T13: #RL
-            for tokens, target_idx, inst_id in generate_sem_eval_2013('./resources/SemEval-2013-Task-13-test-data'):
-                lemma_pos = inst_id.rsplit('.', 1)[0]
-                semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
-        #+RL
-        elif task is Task.SENSEVAL_2_SLS:
-            for tokens, target_idx, inst_id, lemma_pos in generate_senseval_2(taskPath):
-                semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
-        elif task is Task.SEMEVAL_2015_T13:
-            for tokens, target_idx, inst_id, lemma_pos in generate_sem_eval_2015(taskPath):
-                semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
+        #task = Task[task] #RL
+        # if task is Task.SEMEVAL_2013_T13: #RL
+        #     for tokens, target_idx, inst_id in generate_sem_eval_2013('./resources/SemEval-2013-Task-13-test-data'):
+        #         lemma_pos = inst_id.rsplit('.', 1)[0]
+        #         semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
+        # #+RL
+        # elif task is Task.SENSEVAL_2_SLS:
+        for tokens, target_idx, inst_id, lemma_pos in generate_senseval_2(taskPath):
+            semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
+        
+        # elif task is Task.SEMEVAL_2015_T13:
+        #     for tokens, target_idx, inst_id, lemma_pos in generate_sem_eval_2015(taskPath):
+        #         semeval_dataset_by_target[lemma_pos][inst_id] = (tokens, target_idx)
         #-
         
         inst_id_to_sense = {}
@@ -73,20 +74,20 @@ class SPWSI:
         if debug_dir:
             out_key_path = os.path.join(debug_dir, run_name + '.key')
         
-        if task is Task.SEMEVAL_2013_T13: #RL
-            scores = evaluate_labeling('./resources/SemEval-2013-Task-13-test-data', inst_id_to_sense, out_key_path)
+        # if task is Task.SEMEVAL_2013_T13: #RL
+        #     scores = evaluate_labeling('./resources/SemEval-2013-Task-13-test-data', inst_id_to_sense, out_key_path)
         #+RL
-        elif task is Task.SENSEVAL_2_SLS:
-            out_key_path = 'mykey'
-            scores = evaluate_labeling(taskPath,inst_id_to_sense,out_key_path,task,maxLabels)
+        # elif task is Task.SENSEVAL_2_SLS:
+        out_key_path = 'mykey'
+        scores = evaluate_labeling(taskPath,inst_id_to_sense,out_key_path,task,maxLabels)
         #-
         if print_progress:
             print('written SemEval key file to %s' % out_key_path)
-        if task is Task.SEMEVAL_2013_T13: #RL    
-            fnmi = scores['all']['FNMI']
-            fbc = scores['all']['FBC']
-            msg = 'results FNMI %.2f FBC %.2f AVG %.2f' % (fnmi * 100, fbc * 100, np.sqrt(fnmi * fbc) * 100)
-            logging.info(msg)
-            if print_progress:
-                print(msg)
+        # if task is Task.SEMEVAL_2013_T13: #RL    
+        #     fnmi = scores['all']['FNMI']
+        #     fbc = scores['all']['FBC']
+        #     msg = 'results FNMI %.2f FBC %.2f AVG %.2f' % (fnmi * 100, fbc * 100, np.sqrt(fnmi * fbc) * 100)
+        #     logging.info(msg)
+        #     if print_progress:
+        #         print(msg)
         return scores
