@@ -119,10 +119,10 @@ class ElmoManyLangs(Bilm) :
         for k,v in self.semfit.items():
             distances[k] = scipy.spatial.distance.cosine(state,v)
         ks,vs = zip(*list(distances.items()))
-        print('ks')
-        print(ks)
-        print('vs')
-        print(vs) 
+        #print('ks')
+        ##print(ks)
+        #print('vs')
+        #print(vs) 
         top_k = []
         ap = list(np.argpartition(-1* np.asarray(vs,dtype=float),cutoff))[:cutoff]
         top_k = [ks[a] for a in ap]
@@ -162,7 +162,7 @@ class ElmoManyLangs(Bilm) :
                 to_embed.append(['y'] + tokens[target_idx:]) #RL
 
         logging.info('embedding %d sentences for target %s' % (len(to_embed), target))
-        embedded = self.elmo.sents2elmo(to_embed)
+        embedded = self.elmo.sents2elmo(to_embed,output_layer=-1)
         #print(list([len(x)] for x in to_embed))
         return inst_id_sent_tuples, embedded
 
