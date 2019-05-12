@@ -11,7 +11,7 @@ import logging
 
 class BilmElmo(Bilm):
 
-    def __init__(self, cuda_device, weights_path, vocab_path, batch_size=40,
+    def __init__(self, cuda_device, weights_path, options_path, vocab_path, batch_size=40,
                  cutoff_elmo_vocab=50000):
         super().__init__()
         logging.info(
@@ -19,7 +19,7 @@ class BilmElmo(Bilm):
             ' batch_size: %d' % (
                 cuda_device, weights_path, vocab_path,
                 batch_size))
-        self.elmo = ElmoEmbedder(cuda_device=cuda_device)
+        self.elmo = ElmoEmbedder(cuda_device=cuda_device, weight_file= weights_path, options_file=options_path )
 
         self.batch_size = batch_size
 

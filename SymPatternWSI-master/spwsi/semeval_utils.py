@@ -60,12 +60,15 @@ def generate_senseval_2(dir_path: str): #+RL
                 with open(dict_path,encoding='ISO-8859-1') as fin_dict:
                     for line in fin_dict:
                         dict_entry = replace_acuted(line.split('#')[0]) 
-                        if  dict_entry == lemma_pos:
-                            pos = line.split('#')[1][0].lower()
-                            if pos == 'a':
-                                pos= 'j'
-                            lemmas[lemma_pos] = pos
-                            break
+                        if dict_entry not in ['','\n']:
+                            if dict_entry[-1] == 's':
+                                dict_entry = dict_entry[:-1]
+                            if  dict_entry == lemma_pos:
+                                pos = line.split('#')[1][0].lower()
+                                if pos == 'a':
+                                    pos= 'j'
+                                lemmas[lemma_pos] = pos
+                                break
             instid_in_key.add(inst_id)
         et_xml = ElementTree.parse(fin_xml)
         for word in et_xml.getroot():
@@ -192,7 +195,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
                 graded = dict()
                 rest = splitted[2:]
                 for index in rest:
-                    graded[index] = 1.0 / len(rest)
+                    graded[splitted[0]+'.'+index] = 1.0 / len(rest)
                 instance[splitted[1]] = graded 
                 if not splitted[0] in goldKey:
                     goldKey[splitted[0]] = instance
@@ -273,7 +276,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
     with tempfile.NamedTemporaryFile('wt') as fout:
         lines = []
         #+RL
-        #print(task)
+        print(labeling)
         if task is Task.SENSEVAL_2_SLS:
             goldPath = 'key'
             #SENSEVAL 2
@@ -316,11 +319,15 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             labelingMap = dictToJ(lemmaLabeling)
             #print(trainingSets)
             num = 1
+            print(maxLabels)
             for jTrainingInstances in listJTrainingInstances:
                 testKey = mapSenses(jTrainingInstances,goldMap,labelingMap)
                 lines = []
                 for instance, label in testKey.items():
-                    clusters_str = ' '.join(x[0] for x in label[0:maxLabels - 1])
+                    
+                    clusters_str = ' '.join(x[0].split('.')[1] for x in label[0:maxLabels])
+                    
+
                     lines.append('%s %s %s' % (instance.split('.')[0],instance,clusters_str))
                 #print(lines)
                 evalKey = key_path+str(num)

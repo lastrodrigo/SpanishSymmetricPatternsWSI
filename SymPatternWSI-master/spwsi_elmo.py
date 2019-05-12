@@ -38,15 +38,16 @@ if __name__ == '__main__':
                         default=DEFAULT_PARAMS['cutoff_lm_vocab'],
                         help='optimization: only use top K words for faster output matrix multiplication')
     #+RL
-    parser.add_argument('--elmo-vocab-path',dest='elmo_vocab_path', type=str,default='./resources/vocab-2016-09-10.txt',
+    parser.add_argument('--elmo-vocab-path',dest='elmo_vocab_path', type=str,default='./resources/vocab.txt',
                         help='path to elmo training vocabulary file')
     parser.add_argument('--weights-path',dest='weights_path',type=str,
-                        default='./resources/elmo_2x4096_512_2048cnn_2xhighway_softmax_weights.hdf5',
+                        default='./resources/weights.hdf5',
                         help='path to elmo softmax weights')
     parser.add_argument('--task',dest='task',type=str, default='SENSEVAL_2_SLS',
                             help='Task selection, possible values: SE2SLS (default), SE2015T13, SE2013T3')
     parser.add_argument('--taskPath',dest='taskPath',type=str, help='path to task resources directory')
     parser.add_argument('--maxLabels',dest='maxLabels',type=int, default= '2', help='max number of labels per instance to generate key')
+    parser.add_argument('--options-path', dest='optionsPath',type=str, help='Path to options file',default='./resources/options.json')
     #-
     args = parser.parse_args()
 
@@ -73,8 +74,8 @@ if __name__ == '__main__':
 
     #RL elmo_vocab_path = './resources/vocab-2016-09-10.txt'
     BilmElmo.create_lemmatized_vocabulary_if_needed(args.elmo_vocab_path)
-    elmo_as_lm = BilmElmo(args.cuda_device, args.weights_path, #RL
-                          args.elmo_vocab_path,
+    elmo_as_lm = BilmElmo(args.cuda_device, args.weights_path, args.optionsPath,#RL
+                          args.elmo_vocab_path, 
                           batch_size=args.lm_batch_size,
                           cutoff_elmo_vocab=args.cutoff_lm_vocab)
     spwsi_runner = SPWSI(elmo_as_lm)
