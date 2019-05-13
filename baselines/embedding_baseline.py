@@ -45,8 +45,8 @@ class EmbeddingBaseline:
         inst_id_sent_tuples = list(inst_id_to_sentence.items())
         target = inst_id_sent_tuples[0][0].rsplit('.', 1)[0]
         to_embed = []
-
-        for _, tokens in inst_id_sent_tuples:
+        
+        for _, (tokens,_) in inst_id_sent_tuples:
             
             to_embed.append(tokens)
 
@@ -55,7 +55,8 @@ class EmbeddingBaseline:
         instance_embedding = dict()
 
         for index, (inst_id,_) in enumerate(inst_id_sent_tuples):
-            instance_embedding[inst_id] = embedded[index]
+
+            instance_embedding[inst_id] = embedded[index][2][inst_id_to_sentence[inst_id][1]]
         return instance_embedding 
 
 def replace_acuted(word: str): #+RL
@@ -90,15 +91,17 @@ def generate_senseval_2(dir_path: str, dictionary: dict): #+RL
                 lemma_pos += '.' + lemmas[lemma_pos] 
                 context = inst.find("context")
                 before, target, after = list(context.itertext())
-                before = [x.text for x in nlp(before.strip(),disable=['parser','tagger','ner'])]
-                target = target.strip()
-                after = [x.text for x in nlp(after.strip(), disable=['parser','tagger','ner'])]
+                
+                before = [x.text for x in nlp(before.encode(encoding='ISO-8859-1').decode(encoding='UTF-8').strip(),disable=['parser','tagger','ner'])]
+                target = target.encode(encoding='ISO-8859-1').decode(encoding='UTF-8').strip()
+                after = [x.text for x in nlp(after.encode(encoding='ISO-8859-1').decode(encoding='UTF-8').strip(), disable=['parser','tagger','ner'])]
 
-                yield before + [target] + after, inst_id, lemma_pos
+                yield before + [target] + after, len(before), inst_id, lemma_pos
 
 def get_senseval2_dictionary(dir_path:str):
     dict_path = os.path.join(dir_path,'test/senseval.dict')
     dictionary = {}
+    
     with open(dict_path,encoding='ISO-8859-1') as fin_dict:
         for line in fin_dict:
             splitted = line.split('#')
@@ -111,7 +114,9 @@ def get_senseval2_dictionary(dir_path:str):
                     pos= 'j'
                 if not word in dictionary:
                     dictionary[word] = {'pos': pos, 'senses': {}}
-                dictionary[word]['senses'][splitted[2]] = (splitted[3], None)
+                definition = splitted[3]
+                
+                dictionary[word]['senses'][splitted[2]] = (definition, None)
     return dictionary
 
 def __main__():
@@ -123,9 +128,10 @@ def __main__():
     embedding_baseline = EmbeddingBaseline(cuda_device= 0, weights_path=weights_path, options_path=options_path,
                                             batch_size=20)
     semeval_dictionary = get_senseval2_dictionary(taskPath)
-    
-    for tokens, inst_id, lemma_pos in generate_senseval_2(taskPath, semeval_dictionary):
-        semeval_dataset_by_target[lemma_pos][inst_id] = tokens
+    nlp = spacy.load("es", disable=['ner','parser'])
+    for tokens, target_idx, inst_id, lemma_pos in generate_senseval_2(taskPath, semeval_dictionary):
+
+        semeval_dataset_by_target[lemma_pos][inst_id] = (tokens,target_idx)
 
     inst_id_to_sense = {}
     gen = semeval_dataset_by_target.items()
@@ -137,11 +143,26 @@ def __main__():
         lemma = lemma_pos.split('.')[0]
         inst_ids_to_embeddings = embedding_baseline.embed_sentences(
             inst_id_to_sentence)
+
         for sense, (definition, _) in semeval_dictionary[lemma]['senses'].items():
             splitted_definition = definition.split(':')
             gloss = splitted_definition[0]
+            examples = []
+            tokenized_examples = []
             if len(splitted_definition) > 1:
-                examples = splitted_definition[1].split(';')
-                print(examples)
+                examples = [x for x in splitted_definition[1].split(';')]
+                for example in examples:
+                    tokenized_examples.append([x.text for x in nlp(example.strip(),disable=['parser','tagger','ner'])])
+            gloss = [x.text for x in nlp(gloss,disable=['parser','tagger','ner'])]
+            to_embed = [gloss] + tokenized_examples
+
+            embedded = list(embedding_baseline.elmo.embed_sentences(to_embed, embedding_baseline.batch_size))
+            for emb in embedded:
+                layer_2_emb = emb[2]
+                
+                for e in layer_2_emb:
+                    centroid = np.mean(e,axis=1, dtype=np.float64)
+                    print(len(centroid))
+        break
 
         

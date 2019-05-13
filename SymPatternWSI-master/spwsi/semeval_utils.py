@@ -80,9 +80,9 @@ def generate_senseval_2(dir_path: str): #+RL
                 lemma_pos += '.' + lemmas[lemma_pos] 
                 context = inst.find("context")
                 before, target, after = list(context.itertext())
-                before = [x.text for x in nlp(before.strip(),disable=['parser','tagger','ner'])]
-                target = target.strip()
-                after = [x.text for x in nlp(after.strip(), disable=['parser','tagger','ner'])]
+                before = [x.text for x in nlp(before.encode(encoding='ISO-8859-1').decode(encoding='UTF-8').strip(),disable=['parser','tagger','ner'])]
+                target = target.encode(encoding='ISO-8859-1').decode(encoding='UTF-8').strip()
+                after = [x.text for x in nlp(after.encode(encoding='ISO-8859-1').decode(encoding='UTF-8').strip(), disable=['parser','tagger','ner'])]
                 yield before + [target] + after, len(before), inst_id, lemma_pos
 
 def generate_sem_eval_2015(dir_path: str): #+RL
