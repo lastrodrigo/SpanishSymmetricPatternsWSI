@@ -143,7 +143,7 @@ def __main__():
         lemma = lemma_pos.split('.')[0]
         inst_ids_to_embeddings = embedding_baseline.embed_sentences(
             inst_id_to_sentence)
-
+        sense_to_centroid = {}
         for sense, (definition, _) in semeval_dictionary[lemma]['senses'].items():
             splitted_definition = definition.split(':')
             gloss = splitted_definition[0]
@@ -155,14 +155,15 @@ def __main__():
                     tokenized_examples.append([x.text for x in nlp(example.strip(),disable=['parser','tagger','ner'])])
             gloss = [x.text for x in nlp(gloss,disable=['parser','tagger','ner'])]
             to_embed = [gloss] + tokenized_examples
-
             embedded = list(embedding_baseline.elmo.embed_sentences(to_embed, embedding_baseline.batch_size))
-            for emb in embedded:
-                layer_2_emb = emb[2]
-                
-                for e in layer_2_emb:
-                    centroid = np.mean(e,axis=1, dtype=np.float64)
-                    print(len(centroid))
-        break
+            centroids = []
+            for sentence in embedded:
+                centroid = np.mean(sentence[2,:],axis=0, dtype=np.float64)
+                centroids.append(centroid)
+            centroid = np.mean(centroids,axis=0,dtype=np.float64)
+            sense_to_centroid[sense] = centroid
+    print(sense_to_centroid)
+            
+        
 
         
