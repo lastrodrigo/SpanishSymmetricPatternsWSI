@@ -319,7 +319,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             labelingMap = dictToJ(lemmaLabeling)
             #print(trainingSets)
             num = 1
-            print(maxLabels)
+            
             for jTrainingInstances in listJTrainingInstances:
                 testKey = mapSenses(jTrainingInstances,goldMap,labelingMap)
                 lines = []

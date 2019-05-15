@@ -8,7 +8,7 @@ from tqdm import tqdm
 import os
 from xml.etree import ElementTree
 from collections import defaultdict
-
+import scipy
 
 class EmbeddingBaseline:
 
@@ -123,6 +123,7 @@ def __main__():
     weights_path = '../SymPatternWSI-master/resources/weights.hdf5'
     options_path = '../SymPatternWSI-master/resources/options.json'
     taskPath = '../SymPatternWSI-master/spanish-lex-sample'
+    out = 'embeddingBaseline'
     print_progress = True
     semeval_dataset_by_target = defaultdict(dict)
     embedding_baseline = EmbeddingBaseline(cuda_device= 0, weights_path=weights_path, options_path=options_path,
@@ -138,7 +139,7 @@ def __main__():
     
     if print_progress:
         gen = tqdm(gen, desc='embedding sentences')
-    
+    inst_id_to_label = {}
     for lemma_pos, inst_id_to_sentence in gen:
         lemma = lemma_pos.split('.')[0]
         inst_ids_to_embeddings = embedding_baseline.embed_sentences(
@@ -162,8 +163,15 @@ def __main__():
                 centroids.append(centroid)
             centroid = np.mean(centroids,axis=0,dtype=np.float64)
             sense_to_centroid[sense] = centroid
-    print(sense_to_centroid)
-            
-        
+        for inst_id, embedding in inst_ids_to_embeddings.items():
+            sense_to_similarity = {}
+            for sense, centroid in sense_to_centroid.items():
+                sense_to_similarity[sense] = scipy.spatial.distance.cosine(embedding,centroid)
+            sense_list = sorted(sense_to_similarity.items(), key=lambda x: x[1])
+            inst_id_to_label[inst_id] = sense_list[0][0]
+    
+    with open(out,'w') as f_out:
+        for inst_id, label in inst_id_to_label.items():
+            f_out.writelines('%s %s %s\n' % (inst_id.split('.')[0],inst_id, label))
 
-        
+   
