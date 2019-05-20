@@ -1,0 +1,8 @@
+python2.7 ./spanish-lex-sample/score/score ../baselines/embeddingBasel
+ine  ./spanish-lex-sample/key ./spanish-lex-sample/test/emptysensemap 
+
+Fine-grained score for "../baselines/embeddingBaseline" using key "./spanish-lex-sample/key":
+ precision: 0.434 (966.00 correct of 2225.00 attempted)
+ recall: 0.434 (966.00 correct of 2225.00 in total)
+ attempted: 100.000 % (2225.00 attempted of 2225.00 in total)
+

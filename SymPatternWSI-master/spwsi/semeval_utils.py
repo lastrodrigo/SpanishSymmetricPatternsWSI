@@ -178,6 +178,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             splitted = res[3].strip().split()
             ret['all']['recall'] = float(splitted[1])
             ret['all']['total'] = float(splitted[5])
+            splitted = res[4].strip().split()
             ret['all']['attemptedPct'] = float(splitted[1])
         elif task is Task.SEMEVAL_2015_T13:
             pass
@@ -241,9 +242,11 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
         for trainingInstances in listJTrainingSets:
             print('---------------------------------------------Training set %d \n' % trainingSet)
             entrySetIterator = trainingInstances.iterator()
+            string = ''
             while entrySetIterator.hasNext():
                 e = entrySetIterator.next()
-                print(e+', ')
+                string += e +', '
+            print(string)
             trainingSet += 1
 
     def mapSenses(trainingInstances,goldMap,labelingMap): #+RL
@@ -276,7 +279,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
     with tempfile.NamedTemporaryFile('wt') as fout:
         lines = []
         #+RL
-        print(labeling)
+        # print(labeling)
         if task is Task.SENSEVAL_2_SLS:
             goldPath = 'key'
             #SENSEVAL 2
@@ -295,19 +298,21 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
                 for j in range(0,len(trainingSets)):
                     if j != toExclude:
                         trainingSets[j].add(instance)
-            termToNumberSenses = {}
-            for e in goldKey.items():
-                term = e[0]
+            #print(trainingSets)
+            # termToNumberSenses = {}
+            # for e in goldKey.items():
+            #     term = e[0]
                 
-                senses = set()
-                for ratings in goldKey[term].values():
-                    for sense in ratings.keys():
-                        senses.update(sense)
+            #     senses = set()
+            #     for ratings in goldKey[term].values():
+            #         for sense in ratings.keys():
+            #             senses.update(sense)
                 
-                termToNumberSenses[term] = len(senses)
+            #     termToNumberSenses[term] = len(senses)
             
             
             listJTrainingInstances = getTrainingInstances(trainingSets)
+            #TrainingSets(listJTrainingInstances)
             goldMap = dictToJ(goldKey)
             lemmaLabeling = {}
             for k,v in labeling.items():
@@ -317,28 +322,28 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
                 else:
                     lemmaLabeling[lemma][k] = v
             labelingMap = dictToJ(lemmaLabeling)
-            #print(trainingSets)
-            num = 1
             
+            lines = []
             for jTrainingInstances in listJTrainingInstances:
                 testKey = mapSenses(jTrainingInstances,goldMap,labelingMap)
-                lines = []
+                # print(sorted(testKey.items(), key= lambda x: x[0]))
                 for instance, label in testKey.items():
                     
                     clusters_str = ' '.join(x[0].split('.')[1] for x in label[0:maxLabels])
                     
 
                     lines.append('%s %s %s' % (instance.split('.')[0],instance,clusters_str))
-                #print(lines)
-                evalKey = key_path+str(num)
-                logging.info('writing key to file %s' % evalKey)
                 
-                with open(evalKey, 'w', encoding="utf-8") as fout2:
-                    fout2.write('\n'.join(lines))
-                scores = get_scores(os.path.join(dir_path, goldPath), #'keys/gold/all.key'), RL goldPath added
-                             evalKey,task) #RL  task added
-                num += 1
-                print(scores)
+            evalKey = key_path
+            logging.info('writing key to file %s' % evalKey)
+            
+            with open(evalKey, 'w', encoding="utf-8") as fout2:
+                lines = sorted(lines)
+                fout2.write('\n'.join(lines))
+            scores = get_scores(os.path.join(dir_path, goldPath), #'keys/gold/all.key'), RL goldPath added
+                            evalKey,task) #RL  task added
+            
+            print(scores)
         elif task is Task.SEMEVAL_2013_T13:
         #-
             goldPath = 'keys/gold/all.key'

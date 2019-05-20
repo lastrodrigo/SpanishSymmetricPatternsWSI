@@ -1,55 +1,13 @@
-from spwsi.bilm_elmo import BilmElmo
+from spwsi_elmo import main
+from spwsi.spwsi import DEFAULT_PARAMS
 import argparse
-import os
-import logging
-from time import strftime
-from spwsi.spwsi import DEFAULT_PARAMS, SPWSI, Task #RL added Task
+import numpy as np
 
-def main(args):
+if __name__ == "__main__":
+    n_runs = 100
 
-    startmsg = 'BiLM Symmetric Patterns WSI Demo\n\n'
-    startmsg += 'Arguments:\n'
-    startmsg += '-' * 10 + '\n'
-    for arg in vars(args):
-        startmsg += (' %-30s:%s\n' % (arg.replace('_', '-'), getattr(args, arg)))
-    startmsg = startmsg.strip()
-    print(startmsg)
-
-    run_name = strftime("%m%d-%H%M%S") + ('-' + args.run_postfix if args.run_postfix else '')
-    print('this run name: %s' % run_name)
-    if args.debug_dir:
-        if not os.path.exists(args.debug_dir):
-            os.makedirs(args.debug_dir)
-        root_logger = logging.getLogger()
-        root_logger.setLevel(logging.INFO)
-        handler = logging.FileHandler(os.path.join(args.debug_dir, '%s.log.txt' % run_name), 'w', 'utf-8')
-        formatter = logging.Formatter(fmt='%(asctime)s %(message)s', datefmt='%H:%M:%S')
-        handler.setFormatter(formatter)  # Pass handler as a parameter, not assign
-        root_logger.addHandler(handler)
-    logging.info(startmsg)
-
-    #RL elmo_vocab_path = './resources/vocab-2016-09-10.txt'
-    BilmElmo.create_lemmatized_vocabulary_if_needed(args.elmo_vocab_path)
-    elmo_as_lm = BilmElmo(args.cuda_device, args.weights_path, args.optionsPath,#RL
-                          args.elmo_vocab_path, 
-                          batch_size=args.lm_batch_size,
-                          cutoff_elmo_vocab=args.cutoff_lm_vocab)
-    spwsi_runner = SPWSI(elmo_as_lm)
-
-    scores = spwsi_runner.run(n_clusters=args.n_clusters, n_represent=args.n_represent,
-                              n_samples_side=args.n_samples_side, disable_lemmatization=args.disable_lemmatization,
-                              disable_tfidf=args.disable_tfidf,
-                              disable_symmetric_patterns=args.disable_symmetric_patterns,
-                              prediction_cutoff=args.prediction_cutoff,
-                              debug_dir=args.debug_dir, run_name=run_name,
-                              taskPath= args.taskPath, task= args.task, maxLabels= args.maxLabels, #RL added
-                              print_progress=True)
-    logging.info('full results: %s' % scores)
-    return scores
-
-if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='BiLM Symmetric Patterns WSI Demo',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+                                        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--n-clusters', dest='n_clusters', type=int, default=DEFAULT_PARAMS['n_clusters'],
                         help='number of clusters per instance')
     parser.add_argument('--n-representatives', dest='n_represent', type=int, default=DEFAULT_PARAMS['n_represent'],
@@ -91,6 +49,28 @@ if __name__ == '__main__':
     parser.add_argument('--maxLabels',dest='maxLabels',type=int, default= '2', help='max number of labels per instance to generate key')
     parser.add_argument('--options-path', dest='optionsPath',type=str, help='Path to options file',default='./resources/options.json')
     #-
-    
     args = parser.parse_args()
-    main(args)
+    
+    precisions = []
+    corrects = []
+    attempteds = []
+    recalls = []
+    attempted_pcts = []
+    for run in range(0, n_runs):
+        print('Run N° %d' % (run + 1))
+        print('------------')
+        results = main(args)['all']
+        precisions.append(results['precision'])
+        corrects.append(results['correct'])
+        attempteds.append(results['attempted'])
+        recalls.append(results['recall'])
+        attempted_pcts.append(results['attemptedPct'])
+        total = results['total']
+    print('Averages')
+    print('--------')
+    print('Precision: %f' % np.mean(precisions))
+    print('Correct: %f' % np.mean(corrects))
+    print('Attempted: %f' % np.mean(attempteds))
+    print('Recall: %f' % np.mean(recalls))
+    print('Attempted Pct: %f' % np.mean(attempted_pcts))
+    print('Total: %d' % total)

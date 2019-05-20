@@ -31,7 +31,7 @@ class SPWSI:
 
     def run(self, n_clusters, n_represent, n_samples_side, disable_tfidf, debug_dir, run_name,
             disable_symmetric_patterns, disable_lemmatization, prediction_cutoff,
-            taskPath,task:Task,maxLabels,print_progress=False,): #RL added task, taskPath and maxLabels
+            taskPath,task:Task,maxLabels, print_progress=False,): #RL added task, taskPath and maxLabels
 
         semeval_dataset_by_target = defaultdict(dict)
 
@@ -69,15 +69,14 @@ class SPWSI:
             clusters = cluster_inst_ids_representatives(inst_ids_to_representatives, n_clusters, disable_tfidf)
             inst_id_to_sense.update(clusters)
 
-        out_key_path = None
+        out_key_path = 'key'
         if debug_dir:
-            out_key_path = os.path.join(debug_dir, run_name + '.key')
+            out_key_path = os.path.join(debug_dir,out_key_path+'_'+ run_name + '.key')
         
         if task is Task.SEMEVAL_2013_T13: #RL
             scores = evaluate_labeling('./resources/SemEval-2013-Task-13-test-data', inst_id_to_sense, out_key_path)
         #+RL
         elif task is Task.SENSEVAL_2_SLS:
-            out_key_path = 'mykey'
             scores = evaluate_labeling(taskPath,inst_id_to_sense,out_key_path,task,maxLabels)
         #-
         if print_progress:
