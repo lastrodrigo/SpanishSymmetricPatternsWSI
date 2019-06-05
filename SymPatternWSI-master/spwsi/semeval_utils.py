@@ -280,6 +280,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
         lines = []
         #+RL
         # print(labeling)
+        task = Task.SENSEVAL_2_SLS
         if task is Task.SENSEVAL_2_SLS:
             goldPath = 'key'
             #SENSEVAL 2
@@ -364,5 +365,5 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
                     fout2.write('\n'.join(lines))
 
         
-        return scores
+    return scores
 
