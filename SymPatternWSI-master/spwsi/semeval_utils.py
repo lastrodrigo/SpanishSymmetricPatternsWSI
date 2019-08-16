@@ -11,6 +11,7 @@ from jnius import autoclass #RL
 import random
 from enum import Enum 
 import subprocess
+from evaluation.evaluator import Evaluator
 #-
 
 def generate_sem_eval_2013(dir_path: str):
@@ -168,7 +169,10 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             for instance, labels in instances.items():
                 jInstance = String(instance)
                 labelMap = HashMap()
+                sum_applicabilities = sum([a for _, a in labels.items()])
                 for label, applicability in labels.items():
+                    if sum_applicabilities > 1:
+                        applicability /= sum_applicabilities
                     jLabel = String(label)
                     jApplicability = Double(applicability)
                     labelMap.put(jLabel,jApplicability)
@@ -202,7 +206,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             print(string)
             trainingSet += 1
 
-    def mapSenses(trainingInstances,goldMap,labelingMap): #+RL
+    def mapSenses(trainingInstances,goldMap,labelingMap, maxLabels): #+RL
         GradedReweightedKeyMapper = autoclass('edu.ucla.clustercomparison.GradedReweightedKeyMapper')
         mapper = GradedReweightedKeyMapper()
         allRemappedTestKey = {}
@@ -224,9 +228,10 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
                     l = labelIterator.next()
                     label = l.getKey()
                     applicability = l.getValue()
+                    print(f'{label} -----{applicability}')
                     labelList.append((label,applicability))
                 labelList.sort(key=lambda x:x[1],reverse=True)
-                allRemappedTestKey[instance] = labelList
+                allRemappedTestKey[instance] = labelList[0:maxLabels]
         return allRemappedTestKey
 
     with tempfile.NamedTemporaryFile('wt') as fout:
@@ -265,6 +270,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
         #TrainingSets(listJTrainingInstances)
         goldMap = dictToJ(goldKey)
         lemmaLabeling = {}
+        print(labeling)
         for k,v in labeling.items():
             lemma = k.split('.')[0]
             if not lemma in lemmaLabeling:
@@ -274,16 +280,19 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
         labelingMap = dictToJ(lemmaLabeling)
         
         lines = []
+        global_test_key = {}
         for jTrainingInstances in listJTrainingInstances:
-            testKey = mapSenses(jTrainingInstances,goldMap,labelingMap)
+            testKey = mapSenses(jTrainingInstances,goldMap,labelingMap, maxLabels)
             # print(sorted(testKey.items(), key= lambda x: x[0]))
+            global_test_key.update(testKey)
             for instance, label in testKey.items():
                 
                 clusters_str = ' '.join(x[0].split('.')[1] for x in label[0:maxLabels])
                 
 
                 lines.append('%s %s %s' % (instance.split('.')[0],instance,clusters_str))
-            
+        evaluator = Evaluator(goldKey, global_test_key)
+        evals = evaluator.semeval_2013_task_13_metrics()
         evalKey = key_path
         logging.info('writing key to file %s' % evalKey)
         
@@ -292,7 +301,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
             fout2.write('\n'.join(lines))
         scores = get_scores(os.path.join(dir_path, goldPath), #'keys/gold/all.key'), RL goldPath added
                         evalKey) #RL  task added
-        
+        scores['all'].update(evals)
         print(scores)
         #-
         # goldPath = 'keys/gold/all.key'
