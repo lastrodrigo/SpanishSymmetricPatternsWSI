@@ -56,6 +56,12 @@ if __name__ == "__main__":
     attempteds = []
     recalls = []
     attempted_pcts = []
+    jaccard_indexes = []
+    positional_taus = []
+    weighted_ndcgs = []
+    bcubed_precisions = []
+    bcubed_recalls = []
+    fnmis = []
     for run in range(0, n_runs):
         print('Run N° %d' % (run + 1))
         print('------------')
@@ -65,12 +71,24 @@ if __name__ == "__main__":
         attempteds.append(results['attempted'])
         recalls.append(results['recall'])
         attempted_pcts.append(results['attemptedPct'])
+        jaccard_indexes.append(results['jaccard_index'])
+        positional_taus.append(results['positional_tau'])
+        weighted_ndcgs.append(results['weighted_ndcg'])
+        bcubed_precisions.append(results['bcubed_precision'])
+        bcubed_recalls.append(results['bcubed_recall'])
+        fnmis.append(results['fuzzy_nmi'])
         total = results['total']
     print('Averages')
     print('--------')
-    print('Precision: %f' % np.mean(precisions))
-    print('Correct: %f' % np.mean(corrects))
-    print('Attempted: %f' % np.mean(attempteds))
-    print('Recall: %f' % np.mean(recalls))
-    print('Attempted Pct: %f' % np.mean(attempted_pcts))
+    print('Precision: %f %f' % (np.mean(precisions), np.std(precisions)))
+    print('Correct: %f %f' % (np.mean(corrects), np.std(corrects)))
+    print('Attempted: %f %f' % (np.mean(attempteds), np.std(attempteds)))
+    print('Recall: %f %f' % (np.mean(recalls), np.std(recalls)))
+    print('Attempted Pct: %f %f' % (np.mean(attempted_pcts), np.std(attempted_pcts)))
+    print('Jaccard Index: %f %f' % (np.mean(jaccard_indexes), np.std(jaccard_indexes)))
+    print('Positional Kendall\'s Tau: %f %f' % (np.mean(positional_taus), np.std(positional_taus)))
+    print('Weighted Normalized Discounted Cumulative Gain: %f %f' % (np.mean(weighted_ndcgs), np.std(weighted_ndcgs)))
+    print('Fuzzy B-Cubed Precision: %f %f' % (np.mean(bcubed_precisions), np.std(bcubed_precisions)))
+    print('Fuzzy B-Cubed Recall: %f %f' % (np.mean(bcubed_recalls), np.std(bcubed_recalls)))
+    print('Fuzzy Normalized Mutual Information: %f %f' % (np.mean(fnmis), np.std(fnmis)))
     print('Total: %d' % total)
