@@ -228,7 +228,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
                     l = labelIterator.next()
                     label = l.getKey()
                     applicability = l.getValue()
-                    print(f'{label} -----{applicability}')
+                    # print(f'{label} -----{applicability}')
                     labelList.append((label,applicability))
                 labelList.sort(key=lambda x:x[1],reverse=True)
                 allRemappedTestKey[instance] = labelList[0:maxLabels]
@@ -270,7 +270,7 @@ def evaluate_labeling(dir_path, labeling: Dict[str, Dict[str, int]], key_path: s
         #TrainingSets(listJTrainingInstances)
         goldMap = dictToJ(goldKey)
         lemmaLabeling = {}
-        print(labeling)
+        # print(labeling)
         for k,v in labeling.items():
             lemma = k.split('.')[0]
             if not lemma in lemmaLabeling:

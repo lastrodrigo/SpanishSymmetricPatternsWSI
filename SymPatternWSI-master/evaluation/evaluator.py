@@ -4,24 +4,6 @@ from jnius import autoclass
 
 
 class Evaluator:
-    
-    def _getKeySENSEVAL2(self, goldPath): #+RL
-        with open(os.path.join(goldPath),'r') as fgold:
-            goldKey = dict()
-            for line in fgold.readlines():
-                splitted = line.strip().split()
-                #if splitted[0] == lemma:
-                instance = dict()
-                graded = dict()
-                rest = splitted[2:]
-                for index in rest:
-                    graded[splitted[0]+'.'+index] = 1.0 / len(rest)
-                instance[splitted[1]] = graded 
-                if not splitted[0] in goldKey:
-                    goldKey[splitted[0]] = instance
-                else:
-                    goldKey[splitted[0]].update(instance)
-        return goldKey
 
     def __init__(self, gold_key, answers):
 
