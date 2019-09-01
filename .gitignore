@@ -9,3 +9,6 @@ CorpusCleaning/out-foreignTokenCleaner/*
 out*
 bilm-tf-master/checkpoints
 bilm-tf-master/result
+*log*
+*pyc*
+*key*
