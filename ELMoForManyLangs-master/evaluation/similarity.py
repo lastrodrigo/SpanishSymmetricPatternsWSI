@@ -23,7 +23,7 @@ for sim_file in files:
             embedding1 = f[key][tokens.index(split_test[0])]
             embedding2 = f[key][tokens.index(split_test[1])]
             test_scores.append(split_test[2])
-            cosine = spatial.distance.cosine(embedding1, embedding2)
+            cosine = 1 - spatial.distance.cosine(embedding1, embedding2)
             distances.append(cosine)
     print('='*20)
     print(sim_file)
